@@ -36,7 +36,8 @@ public class CustomUI : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
-				"Slate",
+                "InputCore",
+                "Slate",
 				"SlateCore",
                 "UMG",
 				"CommonLibrary"

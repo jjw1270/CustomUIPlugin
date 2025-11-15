@@ -8,7 +8,7 @@
 void ABasePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	ConsoleCommand(TEXT("showdebug abilitysystem"));
+	// ConsoleCommand(TEXT("showdebug abilitysystem"));
 }
 
 UAbilitySystemComponent* ABasePlayerController::GetAbilitySystemComponent() const

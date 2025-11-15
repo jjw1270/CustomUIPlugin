@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CustomUI.h"
 #include "Blueprint/UserWidget.h"
+#include "Sound/SoundCue.h"
 #include "WidgetBase.generated.h"
 
 UENUM(BlueprintType)
@@ -28,8 +29,6 @@ enum class EWidgetHideType : uint8
 DECLARE_DELEGATE_OneParam(F_OnWidgetStateChanged, EWidgetState);
 DECLARE_MULTICAST_DELEGATE_OneParam(FM_OnWidgetStateChanged, EWidgetState);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FD_OnWidgetStateChanged, EWidgetState, _old_state);
-
-class USoundCue;
 
 UCLASS(Abstract)
 class CUSTOMUI_API UWidgetBase : public UUserWidget
@@ -64,7 +63,7 @@ private:
 	FM_OnWidgetStateChanged _OnWidgetStateChanged;
 
 private:
-	void SetState(EWidgetState _new_state);
+	void SetWidgetState(EWidgetState _new_state);
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -83,8 +82,8 @@ public:
 	void BindOnWidgetStateChanged(F_OnWidgetStateChanged& _proc);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void OnStateChanged(EWidgetState _old_state);
-	virtual void OnStateChanged_Implementation(EWidgetState _old_state);
+	void OnWidgetStateChanged(EWidgetState _old_state);
+	virtual void OnWidgetStateChanged_Implementation(EWidgetState _old_state);
 
 // Getters
 public:

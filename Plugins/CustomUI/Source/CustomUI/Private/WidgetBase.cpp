@@ -5,7 +5,6 @@
 #include "Animation/WidgetAnimation.h"
 #include "Blueprint/WidgetTree.h"
 #include "MovieScene.h"
-#include "Sound/SoundCue.h"
 
 void UWidgetBase::NativeOnInitialized()
 {
@@ -15,7 +14,7 @@ void UWidgetBase::NativeOnInitialized()
 	OnNativeVisibilityChanged.AddUObject(this, &UWidgetBase::OnVisibilityChanged);
 	
 	_OnWidgetStateChanged.Clear();
-	_OnWidgetStateChanged.AddUObject(this, &UWidgetBase::OnStateChanged);
+	_OnWidgetStateChanged.AddUObject(this, &UWidgetBase::OnWidgetStateChanged);
 }
 
 void UWidgetBase::NativeConstruct()
@@ -31,7 +30,7 @@ void UWidgetBase::NativeTick(const FGeometry& _geo, float _delta)
 
 	if (_WidgetState == EWidgetState::Hide)
 	{
-		SetState(EWidgetState::OnShow);
+		SetWidgetState(EWidgetState::OnShow);
 	}
 }
 
@@ -46,13 +45,13 @@ void UWidgetBase::OnAnimationFinished_Implementation(const UWidgetAnimation* _an
 		case EWidgetState::OnShow:
 			if (_CurrentAnim == ShowAnim)
 			{
-				SetState(EWidgetState::Idle);
+				SetWidgetState(EWidgetState::Idle);
 			}
 			break;
 		case EWidgetState::OnHide:
 			if (_CurrentAnim == HideAnim)
 			{
-				SetState(EWidgetState::Hide);
+				SetWidgetState(EWidgetState::Hide);
 			}
 			break;
 		default:
@@ -71,7 +70,7 @@ void UWidgetBase::OnVisibilityChanged(ESlateVisibility _visibility)
 	}
 }
 
-void UWidgetBase::SetState(EWidgetState _new_state)
+void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 {
 	if (_WidgetState == _new_state)
 		return;
@@ -82,7 +81,7 @@ void UWidgetBase::SetState(EWidgetState _new_state)
 	_OnWidgetStateChanged.Broadcast(_old_state);
 }
 
-void UWidgetBase::OnStateChanged_Implementation(EWidgetState _old_state)
+void UWidgetBase::OnWidgetStateChanged_Implementation(EWidgetState _old_state)
 {
 	if (_WidgetState == EWidgetState::Hide)
 	{
@@ -123,11 +122,11 @@ void UWidgetBase::OnStateChanged_Implementation(EWidgetState _old_state)
 	{
 		if (_WidgetState == EWidgetState::OnShow)
 		{
-			SetState(EWidgetState::Idle);
+			SetWidgetState(EWidgetState::Idle);
 		}
 		else if (_WidgetState == EWidgetState::OnHide)
 		{
-			SetState(EWidgetState::Hide);
+			SetWidgetState(EWidgetState::Hide);
 		}
 	}
 }
@@ -150,7 +149,7 @@ void UWidgetBase::Hide(EWidgetHideType _type, bool _force_immediately)
 	}
 	else
 	{
-		SetState(EWidgetState::OnHide);
+		SetWidgetState(EWidgetState::OnHide);
 	}
 }
 

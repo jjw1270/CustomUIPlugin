@@ -6,8 +6,6 @@
 #include "WidgetBase.h"
 #include "ButtonBase.generated.h"
 
-class USoundCue;
-
 UENUM(BlueprintType)
 enum class EButtonType : uint8
 {
@@ -24,8 +22,9 @@ enum class EButtonState : uint8
 	Disabled
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDM_OnButtonClicked);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDM_OnButtonDoubleClicked);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonClicked, UButtonBase*, _btn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonDoubleClicked, UButtonBase*, _btn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonSubClicked, UButtonBase*, _btn);
 
 UCLASS(Abstract)
 class CUSTOMUI_API UButtonBase : public UWidgetBase
@@ -33,28 +32,60 @@ class CUSTOMUI_API UButtonBase : public UWidgetBase
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<class USizeBox> SizeBox = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(BindWidget))
-		TObjectPtr<class UImage> Img_ButtonStyle = nullptr;
+	TObjectPtr<class UImage> Img_ButtonStyle = nullptr;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Button")
 	EButtonType _ButtonType = EButtonType::Click;
 
 	UPROPERTY(EditAnywhere, Category = "Button")
+	bool _UseSubClick = false;
+
+	UPROPERTY(EditAnywhere, Category = "Button|FixedSize")
+	bool _UseFixedSize = false;
+
+	UPROPERTY(EditAnywhere, Category = "Button|FixedSize")
+	FVector2D _FixedSize = FVector2D(100.0, 40.0f);
+
+	UPROPERTY(EditAnywhere, Category = "Button")
 	TMap<EButtonState, FSlateBrush> _ButtonStyle;
 
-	UPROPERTY(EditAnywhere, Category = "Button|Sound")
+	// todo
+	UPROPERTY(EditAnywhere, Category = "Button|Icon")
+	bool _UseIcon = false;
+
+	UPROPERTY(EditAnywhere, Category = "Button|Icon")
+	TMap<EButtonState, FSlateBrush> _IconStyle;
+
+	UPROPERTY(EditAnywhere, Category = "Button|Text")
+	TMap<EButtonState, FText> _Text;
+
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundCue> _HoverSound = nullptr;
 	
-	UPROPERTY(EditAnywhere, Category = "Button|Sound")
+	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundCue> _ClickSound = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	TObjectPtr<USoundCue> _SubClickSound = nullptr;
+
+	static TSet<FKey> ClickKeyList;
+	static TSet<FKey> SubClickKeyList;
 
 public:
 	UPROPERTY(BlueprintAssignable)
 	FDM_OnButtonClicked _OnButtonClicked;
 
-	UPROPERTY(BlueprintAssignable, meta=(Tooltip="Click 타입만 가능"))
+	UPROPERTY(BlueprintAssignable, meta=(Tooltip="ButtonType = Click 타입만 가능"))
 	FDM_OnButtonDoubleClicked _OnButtonDoubleClicked;
+
+	UPROPERTY(BlueprintAssignable)
+	FDM_OnButtonSubClicked _OnButtonSubClicked;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -76,5 +107,9 @@ public:
 
 protected:
 	void SetButtonState(EButtonState _state);
-	void OnButtonStateChanged();
+	void UpdateButtonStyle();
+
+public:
+	static void SetClickKeyList(const TSet<FKey>& _key_list);
+	static void SetSubClickKeyList(const TSet<FKey>& _key_list);
 };
