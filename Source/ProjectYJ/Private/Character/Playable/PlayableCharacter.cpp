@@ -99,7 +99,7 @@ void APlayableCharacter::SendAbilityLocalInput(bool _is_pressed, const FGameplay
 	if (IsInvalid(_AbilitySystemComp))
 		return;
 
-	auto tag_manager = UUtils::GetGameInstanceSubsystem<UTagManager>(this);
+	auto tag_manager = UCommonUtils::GetGameInstanceSubsystem<UTagManager>(this);
 	if (IsInvalid(tag_manager))
 		return;
 

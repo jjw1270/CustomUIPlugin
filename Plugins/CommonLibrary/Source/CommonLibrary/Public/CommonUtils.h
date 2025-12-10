@@ -1,7 +1,9 @@
 #pragma once 
  
+#include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Utils.generated.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "CommonUtils.generated.h"
 
 #pragma region Log
 
@@ -26,7 +28,7 @@
 
 #pragma endregion
 
-#pragma region Template
+#pragma region ValidCheck
 
 template <typename T>
 FORCEINLINE bool IsValid(const TWeakObjectPtr<T>& _weak_obj_ptr)
@@ -69,9 +71,9 @@ FORCEINLINE bool IsInvalid(const TWeakObjectPtr<T>& _weak_obj_ptr)
 	return !IsValid(_weak_obj_ptr);
 }
 
-FORCEINLINE bool IsAnyInvalid()
+FORCEINLINE bool IsAnyInvalid(const UObject* _obj)
 {
-	return false;
+	return IsInvalid(_obj);
 }
 
 template <typename... Args>
@@ -79,6 +81,8 @@ FORCEINLINE bool IsAnyInvalid(const UObject* _obj, Args... _rest)
 {
 	return IsInvalid(_obj) || IsAnyInvalid(_rest...);
 }
+
+#pragma endregion
 
 template <typename T>
 FORCEINLINE FString TEnumtoString(T _enum_value)
@@ -93,16 +97,17 @@ FORCEINLINE FString TEnumtoString(T _enum_value)
 	return FString(TEXT("InvalidEnum"));
 }
 
-#pragma endregion
+template<typename T>
+concept CONCEPT_GameInstanceSubsystem = TIsDerivedFrom<T, UGameInstanceSubsystem>::Value;
 
 UCLASS()
-class COMMONLIBRARY_API UUtils : public UBlueprintFunctionLibrary
+class COMMONLIBRARY_API UCommonUtils : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
 public:
-	template<typename T>
-	static T* GetGameInstanceSubsystem(const UObject* _obj)
+	template<CONCEPT_GameInstanceSubsystem T>
+	static FORCEINLINE T* GetGameInstanceSubsystem(const UObject* _obj)
 	{
 		if (IsValid(_obj))
 		{

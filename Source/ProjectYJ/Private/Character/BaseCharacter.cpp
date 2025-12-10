@@ -31,7 +31,7 @@ void ABaseCharacter::Tick(float _delta)
 
 void ABaseCharacter::InitAbilitySystemComponent()
 {
-	auto tag_manager = UUtils::GetGameInstanceSubsystem<UTagManager>(this);
+	auto tag_manager = UCommonUtils::GetGameInstanceSubsystem<UTagManager>(this);
 	if (IsInvalid(tag_manager))
 		return;
 
