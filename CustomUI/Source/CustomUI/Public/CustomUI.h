@@ -4,6 +4,7 @@
 
 #include "Modules/ModuleManager.h"
 #include "CommonLibrary.h"
+#include "WidgetDefines.h"
 
 class FCustomUIModule : public IModuleInterface
 {

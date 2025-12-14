@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WidgetBase.h"
+#include "Widgets/WidgetBase.h"
 #include "ButtonBase.generated.h"
 
 UENUM(BlueprintType)

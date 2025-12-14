@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TabBase.h"
+#include "Widgets/Components/TabBase.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 

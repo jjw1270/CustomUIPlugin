@@ -100,6 +100,9 @@ FORCEINLINE FString TEnumtoString(T _enum_value)
 template<typename T>
 concept CONCEPT_GameInstanceSubsystem = TIsDerivedFrom<T, UGameInstanceSubsystem>::Value;
 
+template<typename T>
+concept CONCEPT_LocalPlayerSubsystem = TIsDerivedFrom<T, ULocalPlayerSubsystem>::Value;
+
 UCLASS()
 class COMMONLIBRARY_API UCommonUtils : public UBlueprintFunctionLibrary
 {
@@ -125,5 +128,22 @@ public:
 		return nullptr;
 	}
 
+	template<CONCEPT_LocalPlayerSubsystem T>
+	static FORCEINLINE T* GetLocalPlayerSubsystem(const UObject* _obj)
+	{
+		if (IsValid(_obj))
+		{
+			const auto world = _obj->GetWorld();
+			if (IsValid(world))
+			{
+				auto local_player = world->GetFirstLocalPlayerFromController();
+				if (IsValid(local_player))
+				{
+					return local_player->GetSubsystem<T>();
+				}
+			}
+		}
 
+		return nullptr;
+	}
 };
