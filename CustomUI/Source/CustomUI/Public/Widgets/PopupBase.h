@@ -9,7 +9,7 @@
 
 
 /**
- * viewport에 중복으로 존재 가능하다.
+ * 
  */
 UCLASS(Abstract)
 class CUSTOMUI_API UPopupBase : public UWidgetBase
@@ -17,8 +17,11 @@ class CUSTOMUI_API UPopupBase : public UWidgetBase
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FPopupConfig _PopupConfig;
+
+protected:
+	virtual void NativeConstruct() override;
 
 public:
 	UFUNCTION(BlueprintPure)

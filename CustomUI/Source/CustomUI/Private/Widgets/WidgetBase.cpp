@@ -12,9 +12,6 @@ void UWidgetBase::NativeOnInitialized()
 
 	OnNativeVisibilityChanged.Clear();
 	OnNativeVisibilityChanged.AddUObject(this, &UWidgetBase::OnVisibilityChanged);
-	
-	_OnWidgetStateChanged.Clear();
-	_OnWidgetStateChanged.AddUObject(this, &UWidgetBase::OnWidgetStateChanged);
 }
 
 void UWidgetBase::NativeConstruct()
@@ -30,7 +27,7 @@ void UWidgetBase::NativeTick(const FGeometry& _geo, float _delta)
 
 	if (_WidgetState == EWidgetState::Hide)
 	{
-		SetWidgetState(EWidgetState::OnShow);
+		SetWidgetState(EWidgetState::Showing);
 	}
 }
 
@@ -42,13 +39,13 @@ void UWidgetBase::OnAnimationFinished_Implementation(const UWidgetAnimation* _an
 	{
 		switch (_WidgetState)
 		{
-		case EWidgetState::OnShow:
+		case EWidgetState::Showing:
 			if (_CurrentAnim == ShowAnim)
 			{
 				SetWidgetState(EWidgetState::Idle);
 			}
 			break;
-		case EWidgetState::OnHide:
+		case EWidgetState::Hiding:
 			if (_CurrentAnim == HideAnim)
 			{
 				SetWidgetState(EWidgetState::Hide);
@@ -58,6 +55,13 @@ void UWidgetBase::OnAnimationFinished_Implementation(const UWidgetAnimation* _an
 			break;
 		}
 	}
+}
+
+void UWidgetBase::SynchronizeProperties()
+{
+	Super::SynchronizeProperties();
+
+	OnSynchronizeProperties();
 }
 
 void UWidgetBase::OnVisibilityChanged(ESlateVisibility _visibility)
@@ -78,11 +82,30 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 	EWidgetState _old_state = _WidgetState;
 	_WidgetState = _new_state;
 
-	_OnWidgetStateChanged.Broadcast(_old_state);
+	OnWidgetStateChanged(_old_state);
 }
 
 void UWidgetBase::OnWidgetStateChanged_Implementation(EWidgetState _old_state)
 {
+	// broadcast events
+	switch (_WidgetState)
+	{
+	case EWidgetState::Hide:
+		if (_OnCloseEvent.IsBound())
+			_OnCloseEvent.Broadcast(this, (_WidgetHideType == EWidgetHideType::RemoveFromParent));
+		break;
+	case EWidgetState::Showing:
+		if (_OnShowEvent.IsBound())
+			_OnShowEvent.Broadcast(this);
+		break;
+	case EWidgetState::Idle:
+		if (_OnIdleEvent.IsBound())
+			_OnIdleEvent.Broadcast(this);
+		break;
+	default:
+		break;
+	}
+
 	if (_WidgetState == EWidgetState::Hide)
 	{
 		HideWidget();
@@ -94,7 +117,7 @@ void UWidgetBase::OnWidgetStateChanged_Implementation(EWidgetState _old_state)
 
 	switch (_WidgetState)
 	{
-	case EWidgetState::OnShow:
+	case EWidgetState::Showing:
 		SetRenderOpacity(1.0f);
 		anim_to_play = ShowAnim;
 		PlaySound(_ShowSound);
@@ -103,7 +126,7 @@ void UWidgetBase::OnWidgetStateChanged_Implementation(EWidgetState _old_state)
 		anim_to_play = IdleAnim;
 		is_idle = true;
 		break;
-	case EWidgetState::OnHide:
+	case EWidgetState::Hiding:
 		anim_to_play = HideAnim;
 		PlaySound(_HideSound);
 		break;
@@ -115,16 +138,16 @@ void UWidgetBase::OnWidgetStateChanged_Implementation(EWidgetState _old_state)
 
 	if (IsValid(anim_to_play))
 	{
-		_CurrentAnim = MoveTemp(anim_to_play);
+		_CurrentAnim = anim_to_play;
 		PlayAnimation(_CurrentAnim, 0.0f, is_idle ? 0 : 1);
 	}
 	else
 	{
-		if (_WidgetState == EWidgetState::OnShow)
+		if (_WidgetState == EWidgetState::Showing)
 		{
 			SetWidgetState(EWidgetState::Idle);
 		}
-		else if (_WidgetState == EWidgetState::OnHide)
+		else if (_WidgetState == EWidgetState::Hiding)
 		{
 			SetWidgetState(EWidgetState::Hide);
 		}
@@ -149,7 +172,7 @@ void UWidgetBase::Hide(EWidgetHideType _type, bool _force_immediately)
 	}
 	else
 	{
-		SetWidgetState(EWidgetState::OnHide);
+		SetWidgetState(EWidgetState::Hiding);
 	}
 }
 
@@ -177,26 +200,4 @@ void UWidgetBase::HideWidget()
 	}
 
 	_WidgetHideType = EWidgetHideType::NA;
-}
-
-void UWidgetBase::BindOnWidgetStateChanged(FD_OnWidgetStateChanged _proc)
-{
-	_OnWidgetStateChanged.AddWeakLambda(this,
-		[Proc(MoveTemp(_proc))](EWidgetState _old_state)
-		{
-			Proc.ExecuteIfBound(_old_state);
-		}
-	);
-}
-
-void UWidgetBase::BindOnWidgetStateChanged(F_OnWidgetStateChanged& _proc)
-{
-	_OnWidgetStateChanged.Add(MoveTemp(_proc));
-}
-
-void UWidgetBase::SynchronizeProperties()
-{
-	Super::SynchronizeProperties();
-
-	OnSynchronizeProperties();
 }

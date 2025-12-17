@@ -3,3 +3,9 @@
 
 #include "Widgets/PageBase.h"
 
+void UPageBase::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	SetIsFocusable(true);
+}

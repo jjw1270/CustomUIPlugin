@@ -12,9 +12,9 @@ UENUM(BlueprintType)
 enum class EWidgetState : uint8
 {
 	Hide,
-	OnShow,			// Start Anim 재생중
+	Showing,		// Start Anim 재생중
 	Idle,
-	OnHide,			// Hide Anim 재생중
+	Hiding,			// Hide Anim 재생중
 };
 
 UENUM(BlueprintType)
@@ -25,10 +25,6 @@ enum class EWidgetHideType : uint8
 	Collapsed,
 	Hidden
 };
-
-DECLARE_DELEGATE_OneParam(F_OnWidgetStateChanged, EWidgetState);
-DECLARE_MULTICAST_DELEGATE_OneParam(FM_OnWidgetStateChanged, EWidgetState);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FD_OnWidgetStateChanged, EWidgetState, _old_state);
 
 UCLASS(Abstract)
 class CUSTOMUI_API UWidgetBase : public UUserWidget
@@ -57,38 +53,7 @@ private:
 
 private:
 	EWidgetState _WidgetState = EWidgetState::Hide;
-
 	EWidgetHideType _WidgetHideType = EWidgetHideType::NA;
-
-	FM_OnWidgetStateChanged _OnWidgetStateChanged;
-
-private:
-	void SetWidgetState(EWidgetState _new_state);
-
-public:
-	UFUNCTION(BlueprintCallable)
-	void Hide(EWidgetHideType _type, bool _force_immediately);
-
-	UFUNCTION(BlueprintCallable)
-	void Close(bool _force_immediately);
-
-private:
-	void HideWidget();
-
-// Event
-public:
-	UFUNCTION(BlueprintCallable)
-	void BindOnWidgetStateChanged(FD_OnWidgetStateChanged _proc);
-	void BindOnWidgetStateChanged(F_OnWidgetStateChanged& _proc);
-
-	UFUNCTION(BlueprintNativeEvent)
-	void OnWidgetStateChanged(EWidgetState _old_state);
-	virtual void OnWidgetStateChanged_Implementation(EWidgetState _old_state);
-
-// Getters
-public:
-	UFUNCTION(BlueprintPure)
-	EWidgetState GetWidgetState() const { return _WidgetState; }
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -104,5 +69,43 @@ protected:
 	// "BP"에서 변수에 변경이 있을 때 호출됩니다.
 	UFUNCTION(BlueprintImplementableEvent, meta = (ForceAsFunction))
 	void OnSynchronizeProperties();
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void Hide(EWidgetHideType _type, bool _force_immediately);
+
+	UFUNCTION(BlueprintCallable)
+	void Close(bool _force_immediately);
+
+private:
+	void SetWidgetState(EWidgetState _new_state);
+	void HideWidget();
+
+protected:
+	UFUNCTION(BlueprintNativeEvent)
+	void OnWidgetStateChanged(EWidgetState _old_state);
+	virtual void OnWidgetStateChanged_Implementation(EWidgetState _old_state);
+
+#pragma region Event
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnShowWidget, UWidgetBase*, _widget);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnIdleWidget, UWidgetBase*, _widget);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDM_OnCloseWidget, UWidgetBase*, _widget, bool, _is_removed);
+
+	UPROPERTY(BlueprintAssignable, BlueprintReadOnly)
+	FDM_OnShowWidget _OnShowEvent;
+
+	UPROPERTY(BlueprintAssignable, BlueprintReadOnly)
+	FDM_OnIdleWidget _OnIdleEvent;
+
+	UPROPERTY(BlueprintAssignable, BlueprintReadOnly)
+	FDM_OnCloseWidget _OnCloseEvent;
+
+#pragma endregion Event
+
+// Getters
+public:
+	UFUNCTION(BlueprintPure)
+	EWidgetState GetWidgetState() const { return _WidgetState; }
 
 };

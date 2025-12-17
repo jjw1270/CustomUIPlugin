@@ -7,7 +7,7 @@
 #include "PageBase.generated.h"
 
 /**
- * viewport¿¡ ¿ÀÁ÷ ÇÏ³ª¸¸ Á¸Àç ÇÑ´Ù.
+ * viewportì— í•˜ë‚˜ë§Œ ì¡´ì¬.
  */
 UCLASS(Abstract)
 class CUSTOMUI_API UPageBase : public UWidgetBase
@@ -15,8 +15,11 @@ class CUSTOMUI_API UPageBase : public UWidgetBase
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	FPageConfig _PageConfig;
+
+protected:
+	virtual void NativeConstruct() override;
 
 public:
 	UFUNCTION(BlueprintPure)

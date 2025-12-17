@@ -20,6 +20,8 @@ void UButtonBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	SetIsFocusable(true);
+
 	SetButtonState(EButtonState::Normal);
 }
 
@@ -94,19 +96,21 @@ void UButtonBase::NativeOnMouseLeave(const FPointerEvent& _mouse_event)
 
 FReply UButtonBase::NativeOnMouseButtonDown(const FGeometry& _geo, const FPointerEvent& _mouse_event)
 {
-	FReply reply = Super::NativeOnMouseButtonDown(_geo, _mouse_event);
+	Super::NativeOnMouseButtonDown(_geo, _mouse_event);
 
 	if (_ButtonType == EButtonType::Toggle)
 	{
 		if (ClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 		{
 			if (_ButtonState != EButtonState::Pressed)
+			{
 				PlaySound(_ClickSound);
 
-			SetButtonState(EButtonState::Pressed);
+				SetButtonState(EButtonState::Pressed);
 
-			if (_OnButtonClicked.IsBound())
-				_OnButtonClicked.Broadcast(this);
+				if (_OnButtonClicked.IsBound())
+					_OnButtonClicked.Broadcast(this);
+			}
 		}
 	}
 	else
@@ -114,29 +118,32 @@ FReply UButtonBase::NativeOnMouseButtonDown(const FGeometry& _geo, const FPointe
 		if (ClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 		{
 			if (_ButtonState != EButtonState::Pressed)
-				PlaySound(_ClickSound);
-
-			SetButtonState(EButtonState::Pressed);
-		}
-		
-		if (_UseSubClick)
-		{
-			if (SubClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 			{
-				if (_ButtonState != EButtonState::Pressed)
-					PlaySound(_SubClickSound);
+				PlaySound(_ClickSound);
 
 				SetButtonState(EButtonState::Pressed);
 			}
 		}
+		else if (_UseSubClick)
+		{
+			if (SubClickKeyList.Contains(_mouse_event.GetEffectingButton()))
+			{
+				if (_ButtonState != EButtonState::Pressed)
+				{
+					PlaySound(_SubClickSound);
+
+					SetButtonState(EButtonState::Pressed);
+				}
+			}
+		}
 	}
 
-	return MoveTemp(reply);
+	return GetReply();
 }
 
 FReply UButtonBase::NativeOnMouseButtonUp(const FGeometry& _geo, const FPointerEvent& _mouse_event)
 {
-	FReply reply = Super::NativeOnMouseButtonUp(_geo, _mouse_event);
+	Super::NativeOnMouseButtonUp(_geo, _mouse_event);
 
 	if(_ButtonType == EButtonType::Click)
 	{
@@ -147,8 +154,7 @@ FReply UButtonBase::NativeOnMouseButtonUp(const FGeometry& _geo, const FPointerE
 
 			SetButtonState(EButtonState::Hovered);
 		}
-
-		if (_UseSubClick)
+		else if (_UseSubClick)
 		{
 			if (SubClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 			{
@@ -160,12 +166,12 @@ FReply UButtonBase::NativeOnMouseButtonUp(const FGeometry& _geo, const FPointerE
 		}
 	}
 
-	return MoveTemp(reply);
+	return GetReply();
 }
 
 FReply UButtonBase::NativeOnMouseButtonDoubleClick(const FGeometry& _geo, const FPointerEvent& _mouse_event)
 {
-	FReply reply = Super::NativeOnMouseButtonDoubleClick(_geo, _mouse_event);
+	auto reply = Super::NativeOnMouseButtonDoubleClick(_geo, _mouse_event);
 	
 	if (ClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 	{
@@ -179,7 +185,19 @@ FReply UButtonBase::NativeOnMouseButtonDoubleClick(const FGeometry& _geo, const 
 		}
 	}
 
-	return MoveTemp(reply);
+	return GetReply();
+}
+
+FReply UButtonBase::GetReply() const
+{
+	if (_HandleButtonEvents)
+	{
+		return FReply::Handled();
+	}
+	else
+	{
+		return FReply::Unhandled();
+	}
 }
 
 void UButtonBase::ResetButton()

@@ -40,6 +40,9 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Button")
+	bool _HandleButtonEvents = true;
+
+	UPROPERTY(EditAnywhere, Category = "Button")
 	EButtonType _ButtonType = EButtonType::Click;
 
 	UPROPERTY(EditAnywhere, Category = "Button")
@@ -101,6 +104,7 @@ protected:
 	virtual FReply NativeOnMouseButtonUp(const FGeometry& _geo, const FPointerEvent& _mouse_event) override;
 	virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& _geo, const FPointerEvent& _mouse_event) override;
 
+	FReply GetReply() const;
 public:
 	UFUNCTION(BlueprintCallable)
 	void ResetButton();

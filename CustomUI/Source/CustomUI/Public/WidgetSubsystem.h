@@ -17,14 +17,17 @@ UCLASS()
 class CUSTOMUI_API UWidgetSubsystem : public ULocalPlayerSubsystem
 {
 	GENERATED_BODY()
-	
+
+friend class UWidgetHelpers;
+friend class UPopupBase;
+
 public:
 	virtual void Initialize(FSubsystemCollectionBase& _collection) override;
 	virtual void Deinitialize() override;
 	virtual void PlayerControllerChanged(APlayerController* _new_pc) override;
 
 protected:
-	void ClearAllWidgets();
+	void ClearAllWidgets(bool _clear_close_event);
 	void RebuildWidgets(AWidgetPlayerController* _pc);
 
 ///////////////////////////////////////////////////////////////////
@@ -36,11 +39,11 @@ protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UPageBase> _CurrentPage = nullptr;
 
-public:
-	void CreatePage(AWidgetPlayerController* _pc, TSubclassOf<UPageBase> _page_class);
+protected:
+	UPageBase* CreatePage(TSubclassOf<UPageBase> _page_class);
 
-public:
-	UFUNCTION(BlueprintCallable)
+// getter
+protected:
 	UPageBase* GetCurrentPage() const { return _CurrentPage; }
 
 #pragma endregion Page
@@ -54,10 +57,18 @@ protected:
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UPopupBase>> _CurrentPopups;
 
-public:
-	void CreatePopup(AWidgetPlayerController* _pc, TSubclassOf<UPopupBase> _popup_class);
+protected:
+	UPopupBase* CreatePopup(TSubclassOf<UPopupBase> _popup_class);
 
-#pragma endregion Popup 
+	UFUNCTION() void OnPopupClosed(UWidgetBase* _widget, bool _is_removed);
+
+protected:
+	UPopupBase* GetTopPopup() const;
+
+	bool CanOpenPopup(TSubclassOf<UPopupBase> _popup_class) const;
+	bool IsPopupOpened(TSubclassOf<UPopupBase> _popup_class) const;
+
+#pragma endregion Popup
 
 };
 
@@ -67,9 +78,22 @@ class UWidgetHelpers : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
-	static void OpenPage(const UObject* _world_ctx, TSubclassOf<UPageBase> _page_class);
+	static UWidgetSubsystem* GetWidgetSubsystem(const UObject* _world_ctx);
+
+private:
+	static AWidgetPlayerController* GetPlayerController(const UObject* _world_ctx);
+
+public:
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "_world_ctx"))
+	static UPageBase* OpenPage(const UObject* _world_ctx, TSubclassOf<UPageBase> _page_class);
+
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "_world_ctx"))
+	static UPopupBase* OpenPopup(const UObject* _world_ctx, TSubclassOf<UPopupBase> _popup_class);
 
 	UFUNCTION(BlueprintCallable)
-	static void OpenPopup(const UObject* _world_ctx, TSubclassOf<UPopupBase> _popup_class);
+	static void ClosePopup(UPopupBase* _popup, bool _force_immediately);
+
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "_world_ctx"))
+	static UPopupBase* GetTopPopup(const UObject* _world_ctx);
+
 };

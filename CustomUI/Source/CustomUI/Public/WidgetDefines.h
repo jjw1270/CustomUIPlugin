@@ -41,14 +41,14 @@ public:
 	UPROPERTY(EditAnywhere, meta=(Tooltip="Remain On Level Changed"))
 	bool RemainOnLevelChanged = false;
 
-
 };
 
 UENUM(BlueprintType)
-enum class EPopupStackPriority : uint8
+enum class EWidgetZOrder : uint8
 {
-	Page = 0 UMETA(Hidden),
-
+	Zero = 0,
+	Page			UMETA(Hidden),
+	Popup			UMETA(Hidden),
 };
 
 USTRUCT(BlueprintType)
@@ -58,7 +58,10 @@ struct FPopupConfig
 
 public:
 	UPROPERTY(EditAnywhere)
-	EPopupStackPriority StackPriority = EPopupStackPriority::Page;
+	FName PopupID = FName();
+
+	UPROPERTY(EditAnywhere)
+	bool AllowDuplicate = false;
 
 	UPROPERTY(EditAnywhere)
 	bool ShowMouseCursor = true;
