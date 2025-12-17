@@ -22,10 +22,6 @@ enum class EButtonState : uint8
 	Disabled
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonClicked, UButtonBase*, _btn);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonDoubleClicked, UButtonBase*, _btn);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonSubClicked, UButtonBase*, _btn);
-
 UCLASS(Abstract)
 class CUSTOMUI_API UButtonBase : public UWidgetBase
 {
@@ -80,7 +76,12 @@ protected:
 	static TSet<FKey> ClickKeyList;
 	static TSet<FKey> SubClickKeyList;
 
+// events
 public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonClicked, UButtonBase*, _btn);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonDoubleClicked, UButtonBase*, _btn);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonSubClicked, UButtonBase*, _btn);
+
 	UPROPERTY(BlueprintAssignable)
 	FDM_OnButtonClicked _OnButtonClicked;
 

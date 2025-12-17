@@ -26,7 +26,7 @@ enum class EWidgetHideType : uint8
 	Hidden
 };
 
-UCLASS(Abstract)
+UCLASS(Abstract, HideDropdown)
 class CUSTOMUI_API UWidgetBase : public UUserWidget
 {
 	GENERATED_BODY()

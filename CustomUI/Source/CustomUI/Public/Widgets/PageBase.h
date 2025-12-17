@@ -9,7 +9,7 @@
 /**
  * viewport에 하나만 존재.
  */
-UCLASS(Abstract)
+UCLASS(Abstract, HideDropdown)
 class CUSTOMUI_API UPageBase : public UWidgetBase
 {
 	GENERATED_BODY()

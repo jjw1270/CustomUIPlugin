@@ -58,9 +58,6 @@ struct FPopupConfig
 
 public:
 	UPROPERTY(EditAnywhere)
-	FName PopupID = FName();
-
-	UPROPERTY(EditAnywhere)
 	bool AllowDuplicate = false;
 
 	UPROPERTY(EditAnywhere)

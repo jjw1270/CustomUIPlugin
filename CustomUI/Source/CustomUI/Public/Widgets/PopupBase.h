@@ -11,7 +11,7 @@
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, HideDropdown)
 class CUSTOMUI_API UPopupBase : public UWidgetBase
 {
 	GENERATED_BODY()

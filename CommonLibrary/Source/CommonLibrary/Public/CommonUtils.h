@@ -87,7 +87,6 @@ FORCEINLINE bool IsAnyInvalid(const UObject* _obj, Args... _rest)
 template <typename T>
 FORCEINLINE FString TEnumtoString(T _enum_value)
 {
-	// UENUM() 이 붙은 enum 에서만 StaticEnum<T>() 가 정상 동작함
 	const UEnum* enum_ptr = StaticEnum<T>();
 	if (IsValid(enum_ptr))
 	{
