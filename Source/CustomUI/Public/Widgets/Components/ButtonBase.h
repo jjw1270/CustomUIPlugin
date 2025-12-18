@@ -53,16 +53,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Button")
 	TMap<EButtonState, FSlateBrush> _ButtonStyle;
 
-	// todo
-	UPROPERTY(EditAnywhere, Category = "Button|Icon")
+	// todo 상속!
+	/*UPROPERTY(EditAnywhere, Category = "Button|Icon")
 	bool _UseIcon = false;
 
 	UPROPERTY(EditAnywhere, Category = "Button|Icon")
 	TMap<EButtonState, FSlateBrush> _IconStyle;
 
 	UPROPERTY(EditAnywhere, Category = "Button|Text")
-	TMap<EButtonState, FText> _Text;
-
+	TMap<EButtonState, FText> _Text;*/
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundCue> _HoverSound = nullptr;
