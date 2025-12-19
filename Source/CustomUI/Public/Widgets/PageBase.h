@@ -7,7 +7,7 @@
 #include "PageBase.generated.h"
 
 /**
- * viewport에 하나만 존재.
+ *
  */
 UCLASS(Abstract, HideDropdown)
 class CUSTOMUI_API UPageBase : public UWidgetBase

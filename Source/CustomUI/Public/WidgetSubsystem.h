@@ -73,7 +73,7 @@ protected:
 };
 
 UCLASS()
-class UWidgetHelpers : public UBlueprintFunctionLibrary
+class CUSTOMUI_API UWidgetHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 

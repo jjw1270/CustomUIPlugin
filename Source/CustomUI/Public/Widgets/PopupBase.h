@@ -6,8 +6,6 @@
 #include "WidgetBase.h"
 #include "PopupBase.generated.h"
 
-
-
 /**
  * 
  */

@@ -100,7 +100,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintReadOnly)
 	FDM_OnCloseWidget _OnCloseEvent;
-
 #pragma endregion Event
 
 // Getters

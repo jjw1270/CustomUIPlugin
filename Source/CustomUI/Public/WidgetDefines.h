@@ -15,7 +15,7 @@ enum class EInputMode : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FPageConfig
+struct CUSTOMUI_API FPageConfig
 {
 	GENERATED_BODY()
 
@@ -52,7 +52,7 @@ enum class EWidgetZOrder : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FPopupConfig
+struct CUSTOMUI_API FPopupConfig
 {
 	GENERATED_BODY()
 
