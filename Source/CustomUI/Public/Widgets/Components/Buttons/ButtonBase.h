@@ -29,7 +29,10 @@ public:
 	FLinearColor ShadowColor = FLinearColor();
 
 	UPROPERTY(EditAnywhere)
-	ETextTransformPolicy TextTransformPolicy = ETextTransformPolicy::None;
+	ETextTransformPolicy TransformPolicy = ETextTransformPolicy::None;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ETextJustify::Type> Justification = ETextJustify::Center;
 };
 
 USTRUCT(BlueprintType)

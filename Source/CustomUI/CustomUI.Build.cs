@@ -26,8 +26,9 @@ public class CustomUI : ModuleRules
 			new string[]
 			{
 				"Core",
-				// ... add other public dependencies that you statically link with here ...
-			}
+                "CommonLibrary",
+                "UMG"
+            }
 			);
 			
 		
@@ -38,10 +39,7 @@ public class CustomUI : ModuleRules
 				"Engine",
                 "InputCore",
                 "Slate",
-				"SlateCore",
-                "UMG",
-				"CommonLibrary"
-				// ... add private dependencies that you statically link with here ...	
+				"SlateCore"
 			}
             );
 		

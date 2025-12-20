@@ -76,7 +76,8 @@ void UButtonBase::SynchronizeProperties()
 	{
 		TextBlock->SetShadowOffset(_TextConfig.ShadowOffset);
 		TextBlock->SetShadowColorAndOpacity(_TextConfig.ShadowColor);
-		TextBlock->SetTextTransformPolicy(_TextConfig.TextTransformPolicy);
+		TextBlock->SetTextTransformPolicy(_TextConfig.TransformPolicy);
+		TextBlock->SetJustification(_TextConfig.Justification);
 	}
 
 	SetText(_ButtonText);
