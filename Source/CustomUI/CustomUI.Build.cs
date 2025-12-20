@@ -25,11 +25,7 @@ public class CustomUI : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
-                "CommonLibrary",
-                "Slate",
-                "SlateCore",
-                "UMG"
+				"Core"
             }
 			);
 			
@@ -40,7 +36,11 @@ public class CustomUI : ModuleRules
 				"CoreUObject",
 				"Engine",
                 "InputCore",
-			}
+                "CommonLibrary",
+                "Slate",
+                "SlateCore",
+                "UMG"
+            }
             );
 		
 		
