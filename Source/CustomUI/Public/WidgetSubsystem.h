@@ -93,4 +93,6 @@ public:
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "_world_ctx"))
 	static UPopupBase* GetTopPopup(const UObject* _world_ctx);
 
+	UFUNCTION(BlueprintPure, meta = (WorldContext = "_widget"))
+	static bool IsDesignTime(const UUserWidget* _widget);
 };

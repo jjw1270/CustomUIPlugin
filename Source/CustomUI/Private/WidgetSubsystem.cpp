@@ -303,3 +303,13 @@ UPopupBase* UWidgetHelpers::GetTopPopup(const UObject* _world_ctx)
 
 	return nullptr;
 }
+
+bool UWidgetHelpers::IsDesignTime(const UUserWidget* _widget)
+{
+	if (IsValid(_widget))
+	{
+		return _widget->IsDesignTime();
+	}
+
+	return false;
+}
