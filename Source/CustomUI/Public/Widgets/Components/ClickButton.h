@@ -24,20 +24,15 @@ protected:
 	static TSet<FKey> SubClickKeyList;
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonClicked, UClickButton*, _btn);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnDoubleClicked, UClickButton*, _btn);
 
 	UPROPERTY(BlueprintAssignable)
-	FDM_OnButtonClicked _OnButtonClicked;
+	FDM_OnDoubleClicked _OnDoubleClicked;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonDoubleClicked, UClickButton*, _btn);
-
-	UPROPERTY(BlueprintAssignable)
-	FDM_OnButtonDoubleClicked _OnButtonDoubleClicked;
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnButtonSubClicked, UClickButton*, _btn);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnSubClicked, UClickButton*, _btn);
 
 	UPROPERTY(BlueprintAssignable)
-	FDM_OnButtonSubClicked _OnButtonSubClicked;
+	FDM_OnSubClicked _OnSubClicked;
 
 protected:
 	virtual void NativeOnMouseEnter(const FGeometry& _geo, const FPointerEvent& _mouse_event) override;

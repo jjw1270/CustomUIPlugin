@@ -4,7 +4,6 @@
 #include "Components/ButtonBase.h"
 #include "Components/SizeBox.h"
 #include "Components/Border.h"
-#include "Components/TextBlock.h"
 #include "Components/CanvasPanelSlot.h"
 
 
@@ -67,40 +66,22 @@ void UButtonBase::SynchronizeProperties()
 		}
 	}
 
-	if (IsValid(Border))
-	{
-		Border->SetPadding(_Padding);
-	}
-
-	if (IsValid(TextBlock))
-	{
-		TextBlock->SetShadowOffset(_TextConfig.ShadowOffset);
-		TextBlock->SetShadowColorAndOpacity(_TextConfig.ShadowColor);
-		TextBlock->SetTextTransformPolicy(_TextConfig.TransformPolicy);
-		TextBlock->SetJustification(_TextConfig.Justification);
-	}
-
-	SetText(_ButtonText);
-
 	UpdateButtonStyle();
-}
-
-void UButtonBase::SetText(const FText& _text)
-{
-	_ButtonText = _text;
-
-	if (IsValid(TextBlock))
-	{
-		TextBlock->SetText(_ButtonText);
-	}
 }
 
 void UButtonBase::SetButtonDisabled(bool _is_disabled)
 {
 	if (_is_disabled)
+	{
 		SetButtonState(EButtonState::Disabled);
+	}
 	else
-		ResetButtonState();
+	{
+		if (IsHovered())
+			SetButtonState(EButtonState::Hovered);
+		else
+			SetButtonState(EButtonState::Normal);
+	}
 }
 
 void UButtonBase::ResetButtonState()
@@ -125,6 +106,7 @@ void UButtonBase::SetButtonState(EButtonState _state)
 	_ButtonState = _state;
 
 	UpdateButtonStyle();
+	OnButtonStateChanged();
 }
 
 void UButtonBase::UpdateButtonStyle()
@@ -136,11 +118,6 @@ void UButtonBase::UpdateButtonStyle()
 		{
 			Border->SetBrush(style_ptr->Brush);
 			Border->SetContentColorAndOpacity(style_ptr->ContentColor);
-		}
-
-		if (IsValid(TextBlock))
-		{
-			TextBlock->SetFont(style_ptr->Font);
 		}
 	}
 }

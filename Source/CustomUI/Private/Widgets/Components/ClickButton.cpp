@@ -28,14 +28,7 @@ void UClickButton::NativeOnMouseLeave(const FPointerEvent& _mouse_event)
 {
 	Super::NativeOnMouseLeave(_mouse_event);
 
-	if (_ButtonState == EButtonState::Disabled)
-	{
-		SetButtonState(EButtonState::Disabled);
-	}
-	else
-	{
-		ResetButtonState();
-	}
+	ResetButtonState();
 }
 
 FReply UClickButton::NativeOnMouseButtonDown(const FGeometry& _geo, const FPointerEvent& _mouse_event)
@@ -81,15 +74,15 @@ FReply UClickButton::NativeOnMouseButtonUp(const FGeometry& _geo, const FPointer
 	{
 		if (ClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 		{
-			if (_OnButtonClicked.IsBound())
-				_OnButtonClicked.Broadcast(this);
+			if (_OnClicked.IsBound())
+				_OnClicked.Broadcast(this);
 
 			ResetButtonState();
 		}
 		else if (_UseSubClick && SubClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 		{
-			if (_OnButtonSubClicked.IsBound())
-				_OnButtonSubClicked.Broadcast(this);
+			if (_OnSubClicked.IsBound())
+				_OnSubClicked.Broadcast(this);
 
 			ResetButtonState();
 		}
@@ -113,8 +106,8 @@ FReply UClickButton::NativeOnMouseButtonDoubleClick(const FGeometry& _geo, const
 		{
 			PlaySound(_ClickSound);
 
-			if (_OnButtonDoubleClicked.IsBound())
-				_OnButtonDoubleClicked.Broadcast(this);
+			if (_OnDoubleClicked.IsBound())
+				_OnDoubleClicked.Broadcast(this);
 		}
 	}
 

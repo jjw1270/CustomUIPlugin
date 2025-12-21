@@ -67,3 +67,25 @@ public:
 	bool RemainOnLevelChanged = false;
 
 };
+
+USTRUCT(BlueprintType)
+struct FTextBlockConfig
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	FSlateFontInfo Font = FSlateFontInfo();
+
+	UPROPERTY(EditAnywhere)
+	FVector2D ShadowOffset = FVector2D();
+
+	UPROPERTY(EditAnywhere)
+	FLinearColor ShadowColor = FLinearColor();
+
+	UPROPERTY(EditAnywhere)
+	ETextTransformPolicy TransformPolicy = ETextTransformPolicy::None;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ETextJustify::Type> Justification = ETextJustify::Center;
+};

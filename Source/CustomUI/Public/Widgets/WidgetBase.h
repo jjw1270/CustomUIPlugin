@@ -31,8 +31,11 @@ class CUSTOMUI_API UWidgetBase : public UUserWidget
 {
 	GENERATED_BODY()
 
-private:
-	// Widget Anims
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName _WidgetID = FName();
+
+protected:
 	UPROPERTY(Transient, meta = (BindWidgetAnimOptional))
 	TObjectPtr<UWidgetAnimation> ShowAnim = nullptr;
 
@@ -44,7 +47,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UWidgetAnimation> _CurrentAnim = nullptr;
-
+	
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundCue> _ShowSound = nullptr;
 
@@ -104,6 +107,9 @@ public:
 
 // Getters
 public:
+	UFUNCTION(BlueprintPure)
+	FName GetWidgetID() const { return _WidgetID; }
+
 	UFUNCTION(BlueprintPure)
 	EWidgetState GetWidgetState() const { return _WidgetState; }
 

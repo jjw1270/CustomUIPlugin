@@ -2,6 +2,7 @@
 
 
 #include "Widgets/MarqueeWidgetBase.h"
+#include "WidgetHelper.h"
 #include "Components/NamedSlot.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -9,16 +10,31 @@
 void UMarqueeWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
+}
 
-	if (IsValid(CanvasPanel))
+void UMarqueeWidgetBase::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+
+	if (UWidgetHelper::IsDesignTime(this))
 	{
-		CanvasPanel->SetClipping(EWidgetClipping::ClipToBounds);
+		auto ns_slot = Cast<UCanvasPanelSlot>(NS_Content->Slot);
+		if (IsValid(ns_slot))
+		{
+			ns_slot->SetPosition(FVector2D::Zero());
+		}
 	}
 }
 
 void UMarqueeWidgetBase::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
+
+	if (IsValid(CanvasPanel))
+	{
+		if(CanvasPanel->GetClipping() != EWidgetClipping::ClipToBounds)
+			CanvasPanel->SetClipping(EWidgetClipping::ClipToBounds);
+	}
 
 	if (IsInvalid(NS_Content))
 		return;
@@ -275,38 +291,4 @@ void UMarqueeWidgetBase::DriveAlternateScroll(float _delta)
 	}
 
 	ns_slot->SetPosition(_CurrentPos);
-}
-
-void UMarqueeWidgetBase::NativePreConstruct()
-{
-	Super::NativePreConstruct();
-
-#if WITH_EDITOR
-	// for preview
-	if (IsDesignTime() && _MarqueeType == EMarqueeType::Scroll)
-	{
-		if (IsValid(NS_Content))
-		{
-			auto ns_slot = Cast<UCanvasPanelSlot>(NS_Content->Slot);
-			if (IsValid(ns_slot))
-			{
-				const auto& widget_size = GetPaintSpaceGeometry().GetLocalSize();
-				const auto& content_size = NS_Content->GetDesiredSize();
-
-				if (!widget_size.IsNearlyZero(0.001f) && !content_size.IsNearlyZero(0.001f))
-				{
-					switch (_Orientation)
-					{
-					case EOrientation::Orient_Horizontal:
-						ns_slot->SetPosition(FVector2D(-content_size.X, 0.0f));
-						break;
-					case EOrientation::Orient_Vertical:
-						ns_slot->SetPosition(FVector2D(0.0f, -content_size.Y));
-						break;
-					}
-				}
-			}
-		}
-	}
-#endif
 }

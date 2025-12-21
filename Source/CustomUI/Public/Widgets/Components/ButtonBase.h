@@ -15,35 +15,12 @@ enum class EButtonState : uint8
 	Disabled
 };
 
-
-USTRUCT(BlueprintType)
-struct FButtonTextConfig
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	FVector2D ShadowOffset = FVector2D();
-
-	UPROPERTY(EditAnywhere)
-	FLinearColor ShadowColor = FLinearColor();
-
-	UPROPERTY(EditAnywhere)
-	ETextTransformPolicy TransformPolicy = ETextTransformPolicy::None;
-
-	UPROPERTY(EditAnywhere)
-	TEnumAsByte<ETextJustify::Type> Justification = ETextJustify::Center;
-};
-
 USTRUCT(BlueprintType)
 struct FButtonStyleConfig
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere)
-	FSlateFontInfo Font = FSlateFontInfo();
-
 	UPROPERTY(EditAnywhere)
 	FSlateBrush Brush = FSlateBrush();
 
@@ -64,12 +41,9 @@ protected:
 	TObjectPtr<class UBorder> Border = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	TObjectPtr<class UTextBlock> TextBlock = nullptr;
+	TObjectPtr<class UNamedSlot> NS_Content = nullptr;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Button")
-	FText _ButtonText = FText();
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Button")
 	EButtonState _ButtonState = EButtonState::Normal;
 
@@ -83,13 +57,7 @@ protected:
 	FVector2D _FixedSize = FVector2D(100.0, 40.0f);
 
 	UPROPERTY(EditAnywhere, Category = "Button")
-	FButtonTextConfig _TextConfig;
-
-	UPROPERTY(EditAnywhere, Category = "Button")
 	TMap<EButtonState, FButtonStyleConfig> _StateStyles;
-
-	UPROPERTY(EditAnywhere, Category = "Button")
-	FMargin _Padding = FMargin(8.0f, 4.0f);
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundCue> _HoverSound = nullptr;
@@ -98,6 +66,12 @@ protected:
 	TObjectPtr<USoundCue> _ClickSound = nullptr;
 
 	static TSet<FKey> ClickKeyList;
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnClicked, UButtonBase*, _btn);
+
+	UPROPERTY(BlueprintAssignable)
+	FDM_OnClicked _OnClicked;
 
 protected:
 	virtual void NativeConstruct() override;
@@ -111,9 +85,6 @@ protected:
 	}
 
 public:
-	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "_text"))
-	void SetText(const FText& _text);
-
 	UFUNCTION(BlueprintCallable)
 	void SetButtonDisabled(bool _is_disabled);
 
@@ -124,5 +95,10 @@ public:
 
 protected:
 	void SetButtonState(EButtonState _state);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnButtonStateChanged();
+	virtual void OnButtonStateChanged_Implementation() {};
+
 	virtual void UpdateButtonStyle();
 };

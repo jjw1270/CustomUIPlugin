@@ -8,28 +8,6 @@
 #include "RadioButtonGroup.generated.h"
 
 
-USTRUCT(BlueprintType)
-struct FRadioButtonConfig
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	FName Name = FName();
-
-	UPROPERTY(EditAnywhere)
-	FText SelectedText = FText();
-
-	UPROPERTY(EditAnywhere)
-	FText UnselectedText = FText();
-
-	UPROPERTY(EditAnywhere)
-	TMap<EButtonState, FButtonStyleConfig> SelectedStateStyles;
-
-	UPROPERTY(EditAnywhere)
-	TMap<EButtonState, FButtonStyleConfig> UnselectedStateStyles;
-};
-
 UCLASS(Abstract)
 class CUSTOMUI_API URadioButtonGroup : public UWidgetBase
 {
@@ -37,37 +15,41 @@ class CUSTOMUI_API URadioButtonGroup : public UWidgetBase
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	TObjectPtr<class UUniformGridPanel> UniformGridPanel = nullptr;
+	TObjectPtr<class UGridPanel> GP_ButtonGroup = nullptr;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "RadioButtonGroup")
 	TEnumAsByte<EOrientation> _Orientation = EOrientation::Orient_Horizontal;
 
 	UPROPERTY(EditAnywhere, Category = "RadioButtonGroup")
+	TEnumAsByte<EHorizontalAlignment> _HorizontalAlignment = EHorizontalAlignment::HAlign_Fill;
+
+	UPROPERTY(EditAnywhere, Category = "RadioButtonGroup")
+	TEnumAsByte<EVerticalAlignment> _VerticalAlignment = EVerticalAlignment::VAlign_Fill;
+
+	UPROPERTY(EditAnywhere, Category = "RadioButtonGroup")
 	FMargin _ButtonPadding = FMargin();
 
-	UPROPERTY(EditAnywhere, Category = "RadioButtonGroup")
-	TSubclassOf<URadioButton> _RadioButtonClass = nullptr;
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnRadioButtonSelected, URadioButton*, _btn);
 
-	UPROPERTY(EditAnywhere, Category = "RadioButtonGroup")
-	TArray<FRadioButtonConfig> _RadioButtonConfigs;
-
-protected:
-	TOptional<EOrientation> _CurrentOrientation;
+	UPROPERTY(BlueprintAssignable)
+	FDM_OnRadioButtonSelected _OnRadioButtonSelected;
 
 protected:
 	virtual void SynchronizeProperties() override;
 
-public:
-	UFUNCTION(BlueprintCallable)
-	void SelectRadioButtonName(FName _btn_name);
-
-	UFUNCTION(BlueprintCallable)
-	void SelectRadioButtonIndex(int32 _btn_idx);
-
 protected:
-	void CreateRadioButtons();
+	void UpdateRadioButtons();
 
 	UFUNCTION()
-	void OnClickRadioButton(URadioButton* _btn);
+	void OnClickRadioButton(class UButtonBase* _btn);
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void SelectRadioButtonByWidgetID(FName _widget_id);
+
+	UFUNCTION(BlueprintCallable)
+	void SelectRadioButtonByIndex(int32 _index);
+
 };

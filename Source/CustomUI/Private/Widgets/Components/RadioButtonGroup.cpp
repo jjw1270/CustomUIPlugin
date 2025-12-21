@@ -2,101 +2,122 @@
 
 
 #include "Components/RadioButtonGroup.h"
-#include "Components/UniformGridPanel.h"
-#include "Components/UniformGridSlot.h"
+#include "Components/GridPanel.h"
+#include "Components/GridSlot.h"
+
 
 void URadioButtonGroup::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 
-	if (IsInvalid(UniformGridPanel))
+	UpdateRadioButtons();
+}
+
+void URadioButtonGroup::UpdateRadioButtons()
+{
+	if (IsInvalid(GP_ButtonGroup))
 		return;
 
-	UniformGridPanel->SetSlotPadding(_ButtonPadding);
+	auto all_child = GP_ButtonGroup->GetAllChildren();
 
-	if (!_CurrentOrientation.IsSet() || _Orientation != _CurrentOrientation.GetValue())
-	{
-		_CurrentOrientation = _Orientation;
-		CreateRadioButtons();
-	}
-}
-
-void URadioButtonGroup::SelectRadioButtonName(FName _btn_name)
-{
-	for (auto child : UniformGridPanel->GetAllChildren())
-	{
-		auto radio_btn = Cast<URadioButton>(child);
-		if (IsValid(radio_btn))
-		{
-			radio_btn->SetIsSelected(radio_btn->GetRadioButtonName() == _btn_name);
-		}
-	}
-}
-
-void URadioButtonGroup::SelectRadioButtonIndex(int32 _btn_idx)
-{
-	if (_btn_idx < 0 || _btn_idx >= UniformGridPanel->GetChildrenCount())
-	{
-		TRACE_WARNING(TEXT("out of index : %d"), _btn_idx);
-	}
-
-	int32 idx = 0;
-	for (auto child : UniformGridPanel->GetAllChildren())
-	{
-		auto radio_btn = Cast<URadioButton>(child);
-		if (IsValid(radio_btn))
-		{
-			radio_btn->SetIsSelected(idx == _btn_idx);
-			idx++;
-		}
-	}
-}
-
-void URadioButtonGroup::CreateRadioButtons()
-{
-	if (IsInvalid(_RadioButtonClass))
-		return;
-
-	UniformGridPanel->ClearChildren();
+	GP_ButtonGroup->ClearChildren();
 
 	int32 row = 0;
 	int32 col = 0;
-	for (const auto& btn_config : _RadioButtonConfigs)
+
+	for (auto child : all_child)
 	{
-		auto radio_btn = CreateWidget<URadioButton>(this, _RadioButtonClass);
-		if (IsValid(radio_btn))
+		auto radio_button = Cast<URadioButton>(child);
+		if (IsValid(radio_button))
 		{
-			radio_btn->_RadioButtonName = btn_config.Name;
-			radio_btn->_SelectedText = btn_config.SelectedText;
-			radio_btn->_UnselectedText = btn_config.UnselectedText;
-			radio_btn->_SelectedStateStyles = btn_config.SelectedStateStyles;
-			radio_btn->_StateStyles = btn_config.UnselectedStateStyles;
+			if (radio_button->GetWidgetID().IsNone())
+			{
+				TRACE_WARNING(TEXT("Radio Button(%s)의 WidgetID가 설정되지 않았습니다!!"), *radio_button->GetName());
+			}
 
-			radio_btn->_OnButtonClicked.AddDynamic(this, &URadioButtonGroup::OnClickRadioButton);
+			radio_button->_OnClicked.RemoveAll(this);
+			radio_button->_OnClicked.AddDynamic(this, &URadioButtonGroup::OnClickRadioButton);
 
-			auto slot = UniformGridPanel->AddChildToUniformGrid(radio_btn, row, col);
+			auto slot = GP_ButtonGroup->AddChildToGrid(radio_button, row, col);
 			if (IsValid(slot))
 			{
-				slot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
-				slot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+				slot->SetPadding(_ButtonPadding);
 
-				if (_CurrentOrientation.GetValue() == EOrientation::Orient_Horizontal)
+				slot->SetHorizontalAlignment(_HorizontalAlignment);
+				slot->SetVerticalAlignment(_VerticalAlignment);
+
+				if (_Orientation == EOrientation::Orient_Horizontal)
 					col++;
 				else
 					row++;
 			}
 		}
+		else
+		{
+			TRACE_ERROR(TEXT("GP_ButtonGroup에는 Radio Button 만 가능합니다!!"));
+			GP_ButtonGroup->ClearChildren();
+			return;
+		}
 	}
 }
 
-void URadioButtonGroup::OnClickRadioButton(URadioButton* _btn)
+void URadioButtonGroup::OnClickRadioButton(UButtonBase* _btn)
 {
-	for (auto child : UniformGridPanel->GetAllChildren())
+	if (IsInvalid(_btn))
+		return;
+
+	SelectRadioButtonByWidgetID(_btn->GetWidgetID());
+}
+
+void URadioButtonGroup::SelectRadioButtonByWidgetID(FName _widget_id)
+{
+	for (auto child : GP_ButtonGroup->GetAllChildren())
 	{
 		auto radio_btn = Cast<URadioButton>(child);
 		if (IsValid(radio_btn))
 		{
-			radio_btn->SetIsSelected(radio_btn == _btn);
+			if (radio_btn->GetWidgetID() == _widget_id)
+			{
+				radio_btn->SetIsSelected(true);
+
+				if (_OnRadioButtonSelected.IsBound())
+					_OnRadioButtonSelected.Broadcast(radio_btn);
+			}
+			else
+			{
+				radio_btn->SetIsSelected(false);
+			}
+		}
+	}
+}
+
+void URadioButtonGroup::SelectRadioButtonByIndex(int32 _index)
+{
+	if (_index < 0 || _index >= GP_ButtonGroup->GetChildrenCount())
+	{
+		TRACE_WARNING(TEXT("out of index : %d"), _index);
+		_index = FMath::Clamp(_index, 0, GP_ButtonGroup->GetChildrenCount() - 1);
+	}
+
+	int32 idx = 0;
+	for (auto child : GP_ButtonGroup->GetAllChildren())
+	{
+		auto radio_btn = Cast<URadioButton>(child);
+		if (IsValid(radio_btn))
+		{
+			if (idx == _index)
+			{
+				radio_btn->SetIsSelected(true);
+				
+				if (_OnRadioButtonSelected.IsBound())
+					_OnRadioButtonSelected.Broadcast(radio_btn);
+			}
+			else
+			{
+				radio_btn->SetIsSelected(false);
+			}
+
+			idx++;
 		}
 	}
 }

@@ -6,11 +6,11 @@
 #include "Components/TextBlock.h"
 
 
-void UToggleButton::SynchronizeProperties()
+void UToggleButton::NativeConstruct()
 {
-	Super::SynchronizeProperties();
+	Super::NativeConstruct();
 
-	OnSelectChanged();
+	SetIsSelected(_IsSelected, true);
 }
 
 void UToggleButton::NativeOnMouseEnter(const FGeometry& _geo, const FPointerEvent& _mouse_event)
@@ -32,14 +32,7 @@ void UToggleButton::NativeOnMouseLeave(const FPointerEvent& _mouse_event)
 {
 	Super::NativeOnMouseLeave(_mouse_event);
 
-	if (_ButtonState == EButtonState::Disabled)
-	{
-		SetButtonState(EButtonState::Disabled);
-	}
-	else
-	{
-		ResetButtonState();
-	}
+	ResetButtonState();
 }
 
 FReply UToggleButton::NativeOnMouseButtonDown(const FGeometry& _geo, const FPointerEvent& _mouse_event)
@@ -77,10 +70,10 @@ FReply UToggleButton::NativeOnMouseButtonUp(const FGeometry& _geo, const FPointe
 	{
 		if (ClickKeyList.Contains(_mouse_event.GetEffectingButton()))
 		{
-			ToggleSelected();
+			if (_OnClicked.IsBound())
+				_OnClicked.Broadcast(this);
 
-			if (_OnButtonClicked.IsBound())
-				_OnButtonClicked.Broadcast(this, _IsSelected);
+			ToggleSelected();
 
 			ResetButtonState();
 		}
@@ -89,32 +82,23 @@ FReply UToggleButton::NativeOnMouseButtonUp(const FGeometry& _geo, const FPointe
 	return GetReply();
 }
 
-void UToggleButton::SetIsSelected(bool _is_selected)
+void UToggleButton::SetIsSelected(bool _is_selected, bool _force_update)
 {
-	if (_IsSelected == _is_selected)
+	if (!_force_update && _IsSelected == _is_selected)
 		return;
 	_IsSelected = _is_selected;
 
 	OnSelectChanged();
 	UpdateButtonStyle();
+
+	if (_OnSelectChanged.IsBound())
+		_OnSelectChanged.Broadcast(this, _IsSelected);
 }
 
 bool UToggleButton::ToggleSelected()
 {
 	SetIsSelected(!_IsSelected);
 	return _IsSelected;
-}
-
-void UToggleButton::OnSelectChanged_Implementation()
-{
-	if (_IsSelected)
-	{
-		SetText(_SelectedText);
-	}
-	else
-	{
-		SetText(_UnselectedText);
-	}
 }
 
 void UToggleButton::UpdateButtonStyle()
@@ -128,11 +112,6 @@ void UToggleButton::UpdateButtonStyle()
 			{
 				Border->SetBrush(style_ptr->Brush);
 				Border->SetContentColorAndOpacity(style_ptr->ContentColor);
-			}
-
-			if (IsValid(TextBlock))
-			{
-				TextBlock->SetFont(style_ptr->Font);
 			}
 		}
 	}

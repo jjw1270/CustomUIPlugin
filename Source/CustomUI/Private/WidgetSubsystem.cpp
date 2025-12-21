@@ -3,6 +3,8 @@
 
 #include "WidgetSubsystem.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Widgets/PageBase.h"
+#include "Widgets/PopupBase.h"
 
 void UWidgetSubsystem::Initialize(FSubsystemCollectionBase& _collection)
 {
@@ -255,60 +257,6 @@ bool UWidgetSubsystem::IsPopupOpened(TSubclassOf<UPopupBase> _popup_class) const
 			if (popup->GetClass() == _popup_class.Get())
 				return true;
 		}
-	}
-
-	return false;
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-
-UPageBase* UWidgetHelpers::OpenPage(const UObject* _world_ctx, TSubclassOf<UPageBase> _page_class)
-{
-	auto widget_subsys = UCommonUtils::GetLocalPlayerSubsystem<UWidgetSubsystem>(_world_ctx);
-	if (IsValid(widget_subsys))
-	{
-		return widget_subsys->CreatePage(_page_class);
-	}
-
-	return nullptr;
-}
-
-UPopupBase* UWidgetHelpers::OpenPopup(const UObject* _world_ctx, TSubclassOf<UPopupBase> _popup_class)
-{
-	auto widget_subsys = UCommonUtils::GetLocalPlayerSubsystem<UWidgetSubsystem>(_world_ctx);
-	if (IsValid(widget_subsys))
-	{
-		return widget_subsys->CreatePopup(_popup_class);
-	}
-
-	return nullptr;
-}
-
-void UWidgetHelpers::ClosePopup(UPopupBase* _popup, bool _force_immediately)
-{
-	if (IsValid(_popup))
-	{
-		_popup->Close(_force_immediately);
-	}
-}
-
-UPopupBase* UWidgetHelpers::GetTopPopup(const UObject* _world_ctx)
-{
-	auto widget_subsys = UCommonUtils::GetLocalPlayerSubsystem<UWidgetSubsystem>(_world_ctx);
-	if (IsValid(widget_subsys))
-	{
-		return widget_subsys->GetTopPopup();
-	}
-
-	return nullptr;
-}
-
-bool UWidgetHelpers::IsDesignTime(const UUserWidget* _widget)
-{
-	if (IsValid(_widget))
-	{
-		return _widget->IsDesignTime();
 	}
 
 	return false;

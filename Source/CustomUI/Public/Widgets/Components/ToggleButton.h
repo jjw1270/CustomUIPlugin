@@ -19,22 +19,16 @@ protected:
 	bool _IsSelected = false;
 
 	UPROPERTY(EditAnywhere, Category = "ToggleButton")
-	FText _SelectedText = FText();
-
-	UPROPERTY(EditAnywhere, Category = "ToggleButton")
-	FText _UnselectedText = FText();
-
-	UPROPERTY(EditAnywhere, Category = "ToggleButton")
 	TMap<EButtonState, FButtonStyleConfig> _SelectedStateStyles;
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDM_OnButtonClicked, UToggleButton*, _btn, bool, _is_selected);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDM_OnSelectChanged, UToggleButton*, _btn, bool, _is_selected);
 
 	UPROPERTY(BlueprintAssignable)
-	FDM_OnButtonClicked _OnButtonClicked;
+	FDM_OnSelectChanged _OnSelectChanged;
 	
 protected:
-	virtual void SynchronizeProperties() override;
+	virtual void NativeConstruct() override;
 
 	virtual void NativeOnMouseEnter(const FGeometry& _geo, const FPointerEvent& _mouse_event) override;
 	virtual void NativeOnMouseLeave(const FPointerEvent& _mouse_event) override;
@@ -43,7 +37,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetIsSelected(bool _is_selected);
+	void SetIsSelected(bool _is_selected, bool _force_update = false);
 
 	UFUNCTION(BlueprintCallable)
 	bool ToggleSelected();
@@ -51,7 +45,7 @@ public:
 protected:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnSelectChanged();
-	void OnSelectChanged_Implementation();
+	void OnSelectChanged_Implementation() {};
 
 	virtual void UpdateButtonStyle() override;
 
