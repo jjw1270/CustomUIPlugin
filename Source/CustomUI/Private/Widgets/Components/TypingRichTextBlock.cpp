@@ -218,7 +218,6 @@ void UTypingRichTextBlock::SetTypingSpped(float _speed)
 	if (world->GetTimerManager().IsTimerActive(_TimerHandle) == false)
 		return;
 
-	// 동일 진행상태(인덱스/누적 문자열) 유지한 채로 타이머만 재설정
 	world->GetTimerManager().ClearTimer(_TimerHandle);
 
 	FTimerDelegate delegate;
@@ -230,19 +229,14 @@ void UTypingRichTextBlock::SetTypingSpped(float _speed)
 
 void UTypingRichTextBlock::TickTyping()
 {
-	// 끝까지 다 쳤으면 종료
 	if (_TypingIndex >= _TypingTextList.Num())
 	{
 		StopTyping(false);
 		return;
 	}
 
-	TRACE_LOG(TEXT("!"));
-
-	// 토큰 1개를 누적
 	_TypingAccumulatedStr += _TypingTextList[_TypingIndex];
 	++_TypingIndex;
 
-	// RichTextBlock이므로 SetText에 “마크업 문자열”을 넣어도 데코레이터/스타일이 처리됩니다.
 	SetText(FText::FromString(_TypingAccumulatedStr));
 }
