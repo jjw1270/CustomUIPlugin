@@ -162,13 +162,13 @@ void UWidgetBase::Show(EWidgetShowType _show_type, bool _is_skip_anim)
 	switch (_show_type)
 	{
 	case EWidgetShowType::Visible:
-		SetVisibility(ESlateVisibility::Visible);
+		Super::SetVisibility(ESlateVisibility::Visible);
 		break;
 	case EWidgetShowType::HitTestInvisible:
-		SetVisibility(ESlateVisibility::HitTestInvisible);
+		Super::SetVisibility(ESlateVisibility::HitTestInvisible);
 		break;
 	case EWidgetShowType::SelfHitTestInvisible:
-		SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		Super::SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		break;
 	default:
 		break;
