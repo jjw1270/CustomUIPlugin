@@ -23,7 +23,7 @@ public:
 	static UPopupBase* OpenPopup(const UObject* _world_ctx, TSubclassOf<UPopupBase> _popup_class);
 
 	UFUNCTION(BlueprintCallable)
-	static void ClosePopup(UPopupBase* _popup, bool _force_immediately);
+	static void ClosePopup(UPopupBase* _popup, bool _is_skip_anim);
 
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "_world_ctx"))
 	static UPopupBase* GetTopPopup(const UObject* _world_ctx);

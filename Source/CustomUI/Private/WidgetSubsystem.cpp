@@ -110,7 +110,7 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 	_CurrentPage = CreateWidget<UPageBase>(pc, _page_class);
 	if (IsValid(_CurrentPage))
 	{
-		_CurrentPage->AddToPlayerScreen((int32)EWidgetZOrder::Page);
+		_CurrentPage->AddToViewport((int32)EWidgetZOrder::Page);
 
 		// set is remain on level changed
 		if (_CurrentPage->GetConfig().RemainOnLevelChanged)
@@ -164,7 +164,7 @@ UPopupBase* UWidgetSubsystem::OpenPopup(TSubclassOf<UPopupBase> _popup_class)
 	{
 		popup->_OnCloseEvent.AddDynamic(this, &UWidgetSubsystem::OnPopupClosed);
 
-		popup->AddToPlayerScreen((int32)EWidgetZOrder::Popup);
+		popup->AddToViewport((int32)EWidgetZOrder::Popup);
 
 		// set is remain on level changed
 		if (popup->GetConfig().RemainOnLevelChanged)

@@ -29,11 +29,11 @@ UPopupBase* UWidgetHelper::OpenPopup(const UObject* _world_ctx, TSubclassOf<UPop
 	return nullptr;
 }
 
-void UWidgetHelper::ClosePopup(UPopupBase* _popup, bool _force_immediately)
+void UWidgetHelper::ClosePopup(UPopupBase* _popup, bool _is_skip_anim)
 {
 	if (IsValid(_popup))
 	{
-		_popup->Close(_force_immediately);
+		_popup->Close(_is_skip_anim);
 	}
 }
 

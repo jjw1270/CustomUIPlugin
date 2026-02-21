@@ -64,6 +64,12 @@ void UWidgetBase::SynchronizeProperties()
 	OnSynchronizeProperties();
 }
 
+void UWidgetBase::SetVisibility(ESlateVisibility _visibility)
+{
+	Super::SetVisibility(_visibility);
+	TRACE_WARNING(TEXT("이 함수 대신 UWidgetBase::Show/Hide 함수를 사용해주세요!"));
+}
+
 void UWidgetBase::OnVisibilityChanged(ESlateVisibility _visibility)
 {
 	if (_visibility == ESlateVisibility::Collapsed || _visibility == ESlateVisibility::Hidden)
@@ -151,19 +157,42 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 
 }
 
-void UWidgetBase::Hide(EWidgetHideType _type, bool _force_immediately)
+void UWidgetBase::Show(EWidgetShowType _show_type, bool _is_skip_anim)
 {
-	if (_type == EWidgetHideType::NA)
+	switch (_show_type)
 	{
-		TRACE_ERROR(TEXT("_type이 NA 일 수 없습니다."));
+	case EWidgetShowType::Visible:
+		SetVisibility(ESlateVisibility::Visible);
+		break;
+	case EWidgetShowType::HitTestInvisible:
+		SetVisibility(ESlateVisibility::HitTestInvisible);
+		break;
+	case EWidgetShowType::SelfHitTestInvisible:
+		SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		break;
+	default:
+		break;
+	}
+
+	if (_is_skip_anim)
+	{
+		SetWidgetState(EWidgetState::Idle);
+	}
+}
+
+void UWidgetBase::Hide(EWidgetHideType _hide_type, bool _is_skip_anim)
+{
+	if (_hide_type == EWidgetHideType::NA)
+	{
+		TRACE_ERROR(TEXT("_hide_type이 NA 일 수 없습니다."));
 		return;
 	}
 
-	if (_WidgetHideType == _type)
+	if (_WidgetHideType == _hide_type)
 		return;
-	_WidgetHideType = _type;
+	_WidgetHideType = _hide_type;
 
-	if (_force_immediately)
+	if (_is_skip_anim)
 	{
 		HideWidget();
 	}
@@ -173,9 +202,9 @@ void UWidgetBase::Hide(EWidgetHideType _type, bool _force_immediately)
 	}
 }
 
-void UWidgetBase::Close(bool _force_immediately)
+void UWidgetBase::Close(bool _is_skip_anim)
 {
-	Hide(EWidgetHideType::RemoveFromParent, _force_immediately);
+	Hide(EWidgetHideType::RemoveFromParent, _is_skip_anim);
 }
 
 void UWidgetBase::HideWidget()
@@ -189,10 +218,10 @@ void UWidgetBase::HideWidget()
 		RemoveFromParent();
 		break;
 	case EWidgetHideType::Collapsed:
-		Super::SetVisibility(ESlateVisibility::Collapsed);
+		SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	case EWidgetHideType::Hidden:
-		Super::SetVisibility(ESlateVisibility::Hidden);
+		SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
 

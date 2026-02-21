@@ -18,10 +18,18 @@ enum class EWidgetState : uint8
 };
 
 UENUM(BlueprintType)
+enum class EWidgetShowType : uint8
+{
+	Visible,
+	HitTestInvisible,
+	SelfHitTestInvisible
+};
+
+UENUM(BlueprintType)
 enum class EWidgetHideType : uint8
 {
-	NA					UMETA(Hidden),
-	RemoveFromParent	UMETA(Hidden),
+	NA										UMETA(Hidden),
+	RemoveFromParent			UMETA(Hidden),
 	Collapsed,
 	Hidden
 };
@@ -64,6 +72,7 @@ protected:
 	virtual void NativeTick(const FGeometry& _geo, float _delta) override;
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* _anim) override;
 	virtual void SynchronizeProperties() override;
+	virtual void SetVisibility(ESlateVisibility _visibility) override;
 
 protected:
 	UFUNCTION()
@@ -75,10 +84,13 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void Hide(EWidgetHideType _type, bool _force_immediately);
+	void Show(EWidgetShowType _show_type, bool _is_skip_anim);
 
 	UFUNCTION(BlueprintCallable)
-	void Close(bool _force_immediately);
+	void Hide(EWidgetHideType _hide_type, bool _is_skip_anim);
+
+	UFUNCTION(BlueprintCallable)
+	void Close(bool _is_skip_anim);
 
 private:
 	void SetWidgetState(EWidgetState _new_state);
