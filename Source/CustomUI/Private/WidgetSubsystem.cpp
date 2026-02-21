@@ -70,7 +70,11 @@ void UWidgetSubsystem::RebuildWidgets(AWidgetPlayerController* _pc)
 	}
 	else
 	{
-		OpenPage(_pc->GetInitialPageClass());
+		auto initial_page_class = _pc->GetInitialPageClass();
+		if (IsValid(initial_page_class))
+		{
+			OpenPage(initial_page_class);
+		}
 	}
 
 	// popups
