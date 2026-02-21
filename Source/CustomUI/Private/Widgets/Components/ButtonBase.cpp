@@ -24,6 +24,8 @@ void UButtonBase::NativeConstruct()
 	{
 		TRACE_WARNING(TEXT("EButtonState::Disabled 를 사용해야 합니다!"));
 	}
+
+	ResetButtonState();
 }
 
 void UButtonBase::SetIsEnabled(bool _is_enabled)
