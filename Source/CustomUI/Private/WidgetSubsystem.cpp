@@ -45,6 +45,8 @@ void UWidgetSubsystem::ClearAllWidgets(bool _clear_close_event)
 		_CurrentPage = nullptr;
 	}
 
+	_OpenedPageList.Empty();
+
 	for (UPopupBase* popup : _CurrentPopups)
 	{
 		if (IsValid(popup))
@@ -111,7 +113,7 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 		return nullptr;
 	}
 
-	_CurrentPage = CreateWidget<UPageBase>(pc, _page_class);
+	_CurrentPage = FindOrCreatePage(_page_class);
 	if (IsValid(_CurrentPage))
 	{
 		_CurrentPage->AddToViewport((int32)EWidgetZOrder::Page);
@@ -152,6 +154,37 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 	}
 
 	return _CurrentPage;
+}
+
+UPageBase* UWidgetSubsystem::FindOrCreatePage(TSubclassOf<UPageBase> _page_class)
+{
+	if (IsInvalid(_page_class))
+		return nullptr;
+
+	// 재사용 체크
+	for (auto opened_page : _OpenedPageList)
+	{
+		if (IsValid(opened_page))
+		{
+			if (opened_page->IsA(_page_class))
+			{
+				return opened_page;
+			}
+		}
+	}
+
+	auto pc = GetLocalPlayerController();
+	if (IsValid(pc))
+	{
+		auto new_page = CreateWidget<UPageBase>(pc, _page_class);
+		if (IsValid(new_page))
+		{
+			_OpenedPageList.Add(new_page);
+			return new_page;
+		}
+	}
+
+	return nullptr;
 }
 
 UPopupBase* UWidgetSubsystem::OpenPopup(TSubclassOf<UPopupBase> _popup_class)

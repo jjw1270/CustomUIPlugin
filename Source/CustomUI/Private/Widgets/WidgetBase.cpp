@@ -21,6 +21,13 @@ void UWidgetBase::NativeConstruct()
 	SetRenderOpacity(0.0f);
 }
 
+void UWidgetBase::NativeDestruct()
+{
+	_WidgetState = EWidgetState::Hide;
+
+	Super::NativeDestruct();
+}
+
 void UWidgetBase::NativeTick(const FGeometry& _geo, float _delta)
 {
 	Super::NativeTick(_geo, _delta);
@@ -154,7 +161,6 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 			SetWidgetState(EWidgetState::Hide);
 		}
 	}
-
 }
 
 void UWidgetBase::Show(EWidgetShowType _show_type, bool _is_skip_anim)
@@ -194,7 +200,7 @@ void UWidgetBase::Hide(EWidgetHideType _hide_type, bool _is_skip_anim)
 
 	if (_is_skip_anim)
 	{
-		HideWidget();
+		SetWidgetState(EWidgetState::Hide);
 	}
 	else
 	{

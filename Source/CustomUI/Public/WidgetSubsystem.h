@@ -35,11 +35,15 @@ protected:
 	UPROPERTY()
 	TSubclassOf<UPageBase> _RemainingPageClass = nullptr;
 
-	UPROPERTY(Transient)
+	UPROPERTY()
 	TObjectPtr<UPageBase> _CurrentPage = nullptr;
+
+	UPROPERTY()
+	TSet<UPageBase*> _OpenedPageList; // 재사용을 위함. map jump시 초기화
 
 protected:
 	UPageBase* OpenPage(TSubclassOf<UPageBase> _page_class);
+	UPageBase* FindOrCreatePage(TSubclassOf<UPageBase> _page_class);
 
 // getter
 protected:
