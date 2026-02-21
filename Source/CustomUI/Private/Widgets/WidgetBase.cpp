@@ -218,10 +218,10 @@ void UWidgetBase::HideWidget()
 		RemoveFromParent();
 		break;
 	case EWidgetHideType::Collapsed:
-		SetVisibility(ESlateVisibility::Collapsed);
+		Super::SetVisibility(ESlateVisibility::Collapsed);
 		break;
 	case EWidgetHideType::Hidden:
-		SetVisibility(ESlateVisibility::Hidden);
+		Super::SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
 
