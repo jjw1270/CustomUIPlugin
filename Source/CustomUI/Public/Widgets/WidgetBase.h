@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName _WidgetID = FName();
 
+	UPROPERTY(EditAnywhere)
+	bool _IsShowOnNextTick = true;
+
 protected:
 	UPROPERTY(Transient, meta = (BindWidgetAnimOptional))
 	TObjectPtr<UWidgetAnimation> ShowAnim = nullptr;

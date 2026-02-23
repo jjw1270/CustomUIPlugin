@@ -92,8 +92,6 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 	if (IsInvalid(pc))
 		return nullptr;
 
-	UPageBase* prev_page = nullptr;
-
 	if (IsValid(_CurrentPage) && _CurrentPage->IsInViewport())
 	{
 		if (_CurrentPage->GetClass() == _page_class.Get())
@@ -103,7 +101,9 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 		}
 		else
 		{
-			prev_page = _CurrentPage;
+			// 이전 page 닫아줌
+			_CurrentPage->Close(true);
+			_CurrentPage = nullptr;
 		}
 	}
 
@@ -114,49 +114,43 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 	}
 
 	_CurrentPage = FindOrCreatePage(_page_class);
-	if (IsInvalid(_CurrentPage))
-		return nullptr;
-
-	_CurrentPage->AddToViewport((int32)EWidgetZOrder::Page);
-
-	// set is remain on level changed
-	if (_CurrentPage->GetConfig().RemainOnLevelChanged)
+	if (IsValid(_CurrentPage))
 	{
-		_RemainingPageClass = _page_class;
-	}
-	else
-	{
-		_RemainingPageClass = nullptr;
-	}
+		_CurrentPage->AddToViewport((int32)EWidgetZOrder::Page);
 
-	// set input mode
-	switch (_CurrentPage->GetConfig().InputMode)
-	{
-	case EInputMode::GameAndUI:
-		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(pc,
-			_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
-			_CurrentPage->GetConfig().InMouseLockMode,
-			_CurrentPage->GetConfig().HideCursorDuringCapture,
-			_CurrentPage->GetConfig().FlushInput);
-		break;
-	case EInputMode::GameOnly:
-		UWidgetBlueprintLibrary::SetInputMode_GameOnly(pc,
-			_CurrentPage->GetConfig().FlushInput);
-		break;
-	case EInputMode::UIOnly:
-		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(pc,
-			_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
-			_CurrentPage->GetConfig().InMouseLockMode,
-			_CurrentPage->GetConfig().FlushInput);
-		break;
+		// set is remain on level changed
+		if (_CurrentPage->GetConfig().RemainOnLevelChanged)
+		{
+			_RemainingPageClass = _page_class;
+		}
+		else
+		{
+			_RemainingPageClass = nullptr;
+		}
+
+		// set input mode
+		switch (_CurrentPage->GetConfig().InputMode)
+		{
+		case EInputMode::GameAndUI:
+			UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(pc,
+				_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
+				_CurrentPage->GetConfig().InMouseLockMode,
+				_CurrentPage->GetConfig().HideCursorDuringCapture,
+				_CurrentPage->GetConfig().FlushInput);
+			break;
+		case EInputMode::GameOnly:
+			UWidgetBlueprintLibrary::SetInputMode_GameOnly(pc,
+				_CurrentPage->GetConfig().FlushInput);
+			break;
+		case EInputMode::UIOnly:
+			UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(pc,
+				_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
+				_CurrentPage->GetConfig().InMouseLockMode,
+				_CurrentPage->GetConfig().FlushInput);
+			break;
+		}
 
 		pc->SetShowMouseCursor(_CurrentPage->GetConfig().ShowMouseCursor);
-	}
-
-	if (IsValid(prev_page))
-	{
-		// 이전 page 닫아줌
-		prev_page->Close(true);
 	}
 
 	return _CurrentPage;

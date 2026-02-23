@@ -18,7 +18,10 @@ void UWidgetBase::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	SetRenderOpacity(0.0f);
+	if (_IsShowOnNextTick)
+	{
+		SetRenderOpacity(0.0f);
+	}
 }
 
 void UWidgetBase::NativeDestruct()
@@ -79,11 +82,23 @@ void UWidgetBase::SetVisibility(ESlateVisibility _visibility)
 
 void UWidgetBase::OnVisibilityChanged(ESlateVisibility _visibility)
 {
-	if (_visibility == ESlateVisibility::Collapsed || _visibility == ESlateVisibility::Hidden)
+	switch (_visibility)
 	{
-		SetRenderOpacity(0.0f);
+	case ESlateVisibility::Collapsed:
+	case ESlateVisibility::Hidden:
 		_CurrentAnim = nullptr;
 		_WidgetState = EWidgetState::Hide;
+		break;
+	case ESlateVisibility::Visible:
+	case ESlateVisibility::HitTestInvisible:
+	case ESlateVisibility::SelfHitTestInvisible:
+		if (_IsShowOnNextTick)
+		{
+			SetRenderOpacity(0.0f);
+		}
+		break;
+	default:
+		break;
 	}
 }
 
