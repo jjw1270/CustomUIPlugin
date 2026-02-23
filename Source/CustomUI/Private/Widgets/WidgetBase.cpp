@@ -168,7 +168,7 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 	if (IsAllValid(anim_to_play, anim_config))
 	{
 		_CurrentAnim = anim_to_play;
-		PlayAnimation(_CurrentAnim, 0.0f, is_idle ? 0 : 1, anim_config->PlayType, false, anim_config->IsRestoreState);
+		PlayAnimation(_CurrentAnim, 0.0f, is_idle ? 0 : 1, anim_config->PlayType, 1.0f, anim_config->IsRestoreState);
 	}
 	else
 	{
