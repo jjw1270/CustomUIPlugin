@@ -3,9 +3,12 @@
 
 #include "Widgets/PageBase.h"
 
-void UPageBase::NativeConstruct()
+void UPageBase::SynchronizeProperties()
 {
-	Super::NativeConstruct();
+	Super::SynchronizeProperties();
 
-	SetIsFocusable(true);
+	if(_PageConfig.SetFocus != IsFocusable())
+	{
+		SetIsFocusable(_PageConfig.SetFocus);
+	}
 }

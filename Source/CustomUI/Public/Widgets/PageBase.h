@@ -19,7 +19,7 @@ protected:
 	FPageConfig _PageConfig;
 
 protected:
-	virtual void NativeConstruct() override;
+	virtual void SynchronizeProperties() override;
 
 public:
 	UFUNCTION(BlueprintPure)

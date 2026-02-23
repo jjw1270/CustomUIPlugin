@@ -92,8 +92,6 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 	if (IsInvalid(pc))
 		return nullptr;
 
-	TOptional<FPageConfig> prev_page_config;
-
 	if (IsValid(_CurrentPage) && _CurrentPage->IsInViewport())
 	{
 		if (_CurrentPage->GetClass() == _page_class.Get())
@@ -104,8 +102,6 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 		else
 		{
 			// 이전 page 닫아줌
-			prev_page_config = _CurrentPage->GetConfig();
-
 			_CurrentPage->Close(true);
 			_CurrentPage = nullptr;
 		}
@@ -118,47 +114,45 @@ UPageBase* UWidgetSubsystem::OpenPage(TSubclassOf<UPageBase> _page_class)
 	}
 
 	_CurrentPage = FindOrCreatePage(_page_class);
-	if (IsValid(_CurrentPage))
+	if (IsInvalid(_CurrentPage))
+		return nullptr;
+
+	_CurrentPage->AddToViewport((int32)EWidgetZOrder::Page);
+
+	// set is remain on level changed
+	if (_CurrentPage->GetConfig().RemainOnLevelChanged)
 	{
-		_CurrentPage->AddToViewport((int32)EWidgetZOrder::Page);
-
-		// set is remain on level changed
-		if (_CurrentPage->GetConfig().RemainOnLevelChanged)
-		{
-			_RemainingPageClass = _page_class;
-		}
-		else
-		{
-			_RemainingPageClass = nullptr;
-		}
-
-		// set input mode
-		if (prev_page_config.IsSet() == false || prev_page_config.GetValue().InputMode != _CurrentPage->GetConfig().InputMode)
-		{
-			switch (_CurrentPage->GetConfig().InputMode)
-			{
-			case EInputMode::GameAndUI:
-				UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(pc,
-					_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
-					_CurrentPage->GetConfig().InMouseLockMode,
-					_CurrentPage->GetConfig().HideCursorDuringCapture,
-					_CurrentPage->GetConfig().FlushInput);
-				break;
-			case EInputMode::GameOnly:
-				UWidgetBlueprintLibrary::SetInputMode_GameOnly(pc,
-					_CurrentPage->GetConfig().FlushInput);
-				break;
-			case EInputMode::UIOnly:
-				UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(pc,
-					_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
-					_CurrentPage->GetConfig().InMouseLockMode,
-					_CurrentPage->GetConfig().FlushInput);
-				break;
-			}
-		}
-
-		pc->SetShowMouseCursor(_CurrentPage->GetConfig().ShowMouseCursor);
+		_RemainingPageClass = _page_class;
 	}
+	else
+	{
+		_RemainingPageClass = nullptr;
+	}
+
+	// set input mode
+	switch (_CurrentPage->GetConfig().InputMode)
+	{
+	case EInputMode::GameAndUI:
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(pc,
+			_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
+			_CurrentPage->GetConfig().InMouseLockMode,
+			_CurrentPage->GetConfig().HideCursorDuringCapture,
+			_CurrentPage->GetConfig().FlushInput);
+		break;
+	case EInputMode::GameOnly:
+		UWidgetBlueprintLibrary::SetInputMode_GameOnly(pc,
+			_CurrentPage->GetConfig().FlushInput);
+		break;
+	case EInputMode::UIOnly:
+		UWidgetBlueprintLibrary::SetInputMode_UIOnlyEx(pc,
+			_CurrentPage->GetConfig().SetFocus ? _CurrentPage : nullptr,
+			_CurrentPage->GetConfig().InMouseLockMode,
+			_CurrentPage->GetConfig().FlushInput);
+		break;
+	}
+
+	_CurrentPage->SetCursor(_CurrentPage->GetConfig().ShowMouseCursor ? EMouseCursor::Default : EMouseCursor::None);
+	pc->SetShowMouseCursor(_CurrentPage->GetConfig().ShowMouseCursor);
 
 	return _CurrentPage;
 }
