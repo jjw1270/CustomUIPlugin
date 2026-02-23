@@ -137,6 +137,8 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 	}
 
 	UWidgetAnimation* anim_to_play = nullptr;
+	FWidgetAnimConfig* anim_config = nullptr;
+
 	bool is_idle = false;
 
 	switch (_WidgetState)
@@ -144,14 +146,17 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 	case EWidgetState::Showing:
 		SetRenderOpacity(1.0f);
 		anim_to_play = ShowAnim;
+		anim_config = &_ShowAnimConfig;
 		PlaySound(_ShowSound);
 		break;
 	case EWidgetState::Idle:
 		anim_to_play = IdleAnim;
+		anim_config = &_IdleAnimConfig;
 		is_idle = true;
 		break;
 	case EWidgetState::Hiding:
 		anim_to_play = HideAnim;
+		anim_config = &_HideAnimConfig;
 		PlaySound(_HideSound);
 		break;
 	default:
@@ -160,10 +165,10 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 
 	StopAnimation(_CurrentAnim); // Event는 호출되지 않는다.
 
-	if (IsValid(anim_to_play))
+	if (IsAllValid(anim_to_play, anim_config))
 	{
 		_CurrentAnim = anim_to_play;
-		PlayAnimation(_CurrentAnim, 0.0f, is_idle ? 0 : 1);
+		PlayAnimation(_CurrentAnim, 0.0f, is_idle ? 0 : 1, anim_config->PlayType, false, anim_config->IsRestoreState);
 	}
 	else
 	{

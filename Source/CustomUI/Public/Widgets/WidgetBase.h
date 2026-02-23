@@ -8,6 +8,19 @@
 #include "Sound/SoundCue.h"
 #include "WidgetBase.generated.h"
 
+USTRUCT(BlueprintType)
+struct FWidgetAnimConfig
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<EUMGSequencePlayMode::Type> PlayType = EUMGSequencePlayMode::Forward;
+
+	UPROPERTY(EditAnywhere)
+	bool IsRestoreState = false;
+};
+
 UENUM(BlueprintType)
 enum class EWidgetState : uint8
 {
@@ -55,6 +68,15 @@ protected:
 
 	UPROPERTY(Transient, meta = (BindWidgetAnimOptional))
 	TObjectPtr<UWidgetAnimation> HideAnim = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	FWidgetAnimConfig _ShowAnimConfig;
+
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	FWidgetAnimConfig _IdleAnimConfig;
+
+	UPROPERTY(EditAnywhere, Category = "Anim")
+	FWidgetAnimConfig _HideAnimConfig;
 
 	UPROPERTY()
 	TObjectPtr<UWidgetAnimation> _CurrentAnim = nullptr;
