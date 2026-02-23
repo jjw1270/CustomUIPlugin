@@ -39,7 +39,7 @@ protected:
 	TObjectPtr<UPageBase> _CurrentPage = nullptr;
 
 	UPROPERTY()
-	TSet<UPageBase*> _OpenedPageList; // 재사용을 위함. map jump시 초기화
+	TSet<UPageBase*> _CachedPageList; // 재사용을 위함. map jump시 초기화
 
 protected:
 	UPageBase* OpenPage(TSubclassOf<UPageBase> _page_class);

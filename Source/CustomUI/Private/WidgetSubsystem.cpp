@@ -45,7 +45,7 @@ void UWidgetSubsystem::ClearAllWidgets(bool _clear_close_event)
 		_CurrentPage = nullptr;
 	}
 
-	_OpenedPageList.Empty();
+	_CachedPageList.Empty();
 
 	for (UPopupBase* popup : _CurrentPopups)
 	{
@@ -161,14 +161,25 @@ UPageBase* UWidgetSubsystem::FindOrCreatePage(TSubclassOf<UPageBase> _page_class
 	if (IsInvalid(_page_class))
 		return nullptr;
 
-	// 재사용 체크
-	for (auto opened_page : _OpenedPageList)
+	bool page_can_cached = false;
+
+	auto page_cdo = _page_class.GetDefaultObject();
+	if (IsValid(page_cdo))
 	{
-		if (IsValid(opened_page))
+		page_can_cached = page_cdo->GetConfig().CanCached;
+	}
+
+	if (page_can_cached)
+	{
+		// 재사용 체크
+		for (auto cached_page : _CachedPageList)
 		{
-			if (opened_page->IsA(_page_class))
+			if (IsValid(cached_page))
 			{
-				return opened_page;
+				if (cached_page->IsA(_page_class))
+				{
+					return cached_page;
+				}
 			}
 		}
 	}
@@ -179,7 +190,11 @@ UPageBase* UWidgetSubsystem::FindOrCreatePage(TSubclassOf<UPageBase> _page_class
 		auto new_page = CreateWidget<UPageBase>(pc, _page_class);
 		if (IsValid(new_page))
 		{
-			_OpenedPageList.Add(new_page);
+			if(page_can_cached)
+			{
+				_CachedPageList.Add(new_page);
+			}
+
 			return new_page;
 		}
 	}

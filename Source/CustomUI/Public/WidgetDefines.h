@@ -20,6 +20,9 @@ struct CUSTOMUI_API FPageConfig
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	bool CanCached = false;
+
 	UPROPERTY(EditAnywhere, Category="InputMode")
 	EInputMode InputMode = EInputMode::GameAndUI;
 
