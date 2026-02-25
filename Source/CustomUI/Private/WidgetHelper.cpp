@@ -5,6 +5,7 @@
 #include "WidgetSubsystem.h"
 #include "Widgets/PageBase.h"
 #include "Widgets/PopupBase.h"
+#include "StringTableSubsystem.h"
 
 
 UPageBase* UWidgetHelper::OpenPage(const UObject* _world_ctx, TSubclassOf<UPageBase> _page_class)
@@ -56,4 +57,9 @@ bool UWidgetHelper::IsDesignTime(const UUserWidget* _widget)
 	}
 
 	return false;
+}
+
+FText UWidgetHelper::GetStringTableText(const FString& _table_name, const FString& _key)
+{
+	return UStringTableSubsystem::FindTextFromTable(_table_name, _key);
 }

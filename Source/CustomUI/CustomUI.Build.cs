@@ -41,7 +41,8 @@ public class CustomUI : ModuleRules
                 "InputCore",
                 "Slate",
                 "SlateCore",
-                "UMG"
+                "UMG",
+	            "DeveloperSettings"
             }
             );
 		

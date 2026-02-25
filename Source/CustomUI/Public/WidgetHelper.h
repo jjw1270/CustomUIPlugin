@@ -30,4 +30,10 @@ public:
 
 	UFUNCTION(BlueprintPure, meta = (WorldContext = "_widget"))
 	static bool IsDesignTime(const UUserWidget* _widget);
+
+	UFUNCTION(BlueprintPure)
+	static FText GetStringTableText(const FString& _table_name, const FString& _key);
+
 };
+
+#define GETTEXT(_table_name, _key) URulesHorrorWidgetHelper::GetStringTableText(_table_name, _key);
