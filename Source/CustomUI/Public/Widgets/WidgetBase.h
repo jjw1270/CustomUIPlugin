@@ -95,7 +95,6 @@ protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-	virtual void NativeTick(const FGeometry& _geo, float _delta) override;
 	virtual void OnAnimationFinished_Implementation(const UWidgetAnimation* _anim) override;
 	virtual void SynchronizeProperties() override;
 	virtual void SetVisibility(ESlateVisibility _visibility) override;

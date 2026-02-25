@@ -22,6 +22,11 @@ void UWidgetBase::NativeConstruct()
 	{
 		SetRenderOpacity(0.0f);
 	}
+
+	if(IsVisible() && _WidgetState == EWidgetState::Hide)
+	{
+		SetWidgetState(EWidgetState::Showing);
+	}
 }
 
 void UWidgetBase::NativeDestruct()
@@ -29,16 +34,6 @@ void UWidgetBase::NativeDestruct()
 	_WidgetState = EWidgetState::Hide;
 
 	Super::NativeDestruct();
-}
-
-void UWidgetBase::NativeTick(const FGeometry& _geo, float _delta)
-{
-	Super::NativeTick(_geo, _delta);
-
-	if (_WidgetState == EWidgetState::Hide)
-	{
-		SetWidgetState(EWidgetState::Showing);
-	}
 }
 
 void UWidgetBase::OnAnimationFinished_Implementation(const UWidgetAnimation* _anim)
@@ -95,6 +90,11 @@ void UWidgetBase::OnVisibilityChanged(ESlateVisibility _visibility)
 		if (_IsShowOnNextTick)
 		{
 			SetRenderOpacity(0.0f);
+		}
+
+		if (_WidgetState == EWidgetState::Hide)
+		{
+			SetWidgetState(EWidgetState::Showing);
 		}
 		break;
 	default:
