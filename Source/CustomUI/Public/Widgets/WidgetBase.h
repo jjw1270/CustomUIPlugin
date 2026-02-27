@@ -109,13 +109,13 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void Show(EWidgetShowType _show_type, bool _is_skip_anim);
+	void Show(EWidgetShowType _show_type, bool _is_skip_anim = false);
 
 	UFUNCTION(BlueprintCallable)
-	void Hide(EWidgetHideType _hide_type, bool _is_skip_anim);
+	void Hide(EWidgetHideType _hide_type, bool _is_skip_anim = false);
 
 	UFUNCTION(BlueprintCallable)
-	void Close(bool _is_skip_anim);
+	void Close(bool _is_skip_anim = false);
 
 private:
 	void SetWidgetState(EWidgetState _new_state);
