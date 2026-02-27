@@ -74,6 +74,11 @@ protected:
 	static TSet<FKey> ClickKeyList;
 
 public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FDM_OnButtonStateChanged, UButtonBase*, _btn, EButtonState, _button_state);
+
+	UPROPERTY(BlueprintAssignable)
+	FDM_OnButtonStateChanged _OnButtonStateChanged;
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnClicked, UButtonBase*, _btn);
 
 	UPROPERTY(BlueprintAssignable)
@@ -104,7 +109,7 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnButtonStateChanged();
-	virtual void OnButtonStateChanged_Implementation() {};
+	virtual void OnButtonStateChanged_Implementation();
 
 	virtual void UpdateButtonSize();
 	virtual void UpdateButtonStyle();

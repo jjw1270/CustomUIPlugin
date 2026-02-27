@@ -87,6 +87,14 @@ void UButtonBase::SetButtonState(EButtonState _state)
 	OnButtonStateChanged();
 }
 
+void UButtonBase::OnButtonStateChanged_Implementation()
+{
+	if (_OnButtonStateChanged.IsBound())
+	{
+		_OnButtonStateChanged.Broadcast(this, _ButtonState);
+	}
+}
+
 void UButtonBase::UpdateButtonSize()
 {
 	if (IsValid(SizeBox))
