@@ -8,7 +8,7 @@
 #include "StringTableSubsystem.h"
 
 
-UPageBase* UWidgetHelper::OpenPage(const UObject* _world_ctx, TSubclassOf<UPageBase> _page_class)
+UPageBase* UWidgetHelper::OpenPage_Internal(const UObject* _world_ctx, TSubclassOf<UPageBase> _page_class)
 {
 	auto widget_subsys = UCommonUtils::GetLocalPlayerSubsystem<UWidgetSubsystem>(_world_ctx);
 	if (IsValid(widget_subsys))
@@ -19,7 +19,7 @@ UPageBase* UWidgetHelper::OpenPage(const UObject* _world_ctx, TSubclassOf<UPageB
 	return nullptr;
 }
 
-UPopupBase* UWidgetHelper::OpenPopup(const UObject* _world_ctx, TSubclassOf<UPopupBase> _popup_class)
+UPopupBase* UWidgetHelper::OpenPopup_Internal(const UObject* _world_ctx, TSubclassOf<UPopupBase> _popup_class)
 {
 	auto widget_subsys = UCommonUtils::GetLocalPlayerSubsystem<UWidgetSubsystem>(_world_ctx);
 	if (IsValid(widget_subsys))
