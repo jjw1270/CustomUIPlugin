@@ -108,9 +108,9 @@ protected:
 	void OnSynchronizeProperties();
 
 public:
-	void IsShowOnNextTick(bool _is_show_on_next_tick)
+	void SetIsShowOnNextTick(bool _value)
 	{
-		_IsShowOnNextTick = _is_show_on_next_tick;
+		_IsShowOnNextTick = _value;
 	}
 
 	UFUNCTION(BlueprintCallable)
