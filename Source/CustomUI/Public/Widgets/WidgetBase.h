@@ -108,6 +108,11 @@ protected:
 	void OnSynchronizeProperties();
 
 public:
+	void IsShowOnNextTick(bool _is_show_on_next_tick)
+	{
+		_IsShowOnNextTick = _is_show_on_next_tick;
+	}
+
 	UFUNCTION(BlueprintCallable)
 	void Show(EWidgetShowType _show_type, bool _is_skip_anim = false);
 
