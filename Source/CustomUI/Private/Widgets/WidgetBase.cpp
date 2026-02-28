@@ -144,7 +144,10 @@ void UWidgetBase::SetWidgetState(EWidgetState _new_state)
 	switch (_WidgetState)
 	{
 	case EWidgetState::Showing:
-		SetRenderOpacity(1.0f);
+		if (_IsShowOnNextTick)
+		{
+			SetRenderOpacity(1.0f);
+		}
 		anim_to_play = ShowAnim;
 		anim_config = &_ShowAnimConfig;
 		PlaySound(_ShowSound);
