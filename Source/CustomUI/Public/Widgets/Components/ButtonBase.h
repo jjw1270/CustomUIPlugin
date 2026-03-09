@@ -65,6 +65,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Button")
 	TEnumAsByte<EVerticalAlignment> _ContentVerticalAlignment = EVerticalAlignment::VAlign_Center;
 
+	UPROPERTY(EditAnywhere, Category = "Button")
+	FMargin _ContentPadding = FMargin(0.0f);
+
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	TObjectPtr<USoundCue> _HoverSound = nullptr;
 	
@@ -113,5 +116,5 @@ protected:
 
 	virtual void UpdateButtonSize();
 	virtual void UpdateButtonStyle();
-	virtual void UpdateContentSlotAlignment();
+	virtual void UpdateContentSlot();
 };

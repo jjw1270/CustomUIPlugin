@@ -44,7 +44,7 @@ void UButtonBase::SynchronizeProperties()
 
 	UpdateButtonSize();
 	UpdateButtonStyle();
-	UpdateContentSlotAlignment();
+	UpdateContentSlot();
 }
 
 void UButtonBase::SetButtonDisabled(bool _is_disabled)
@@ -139,7 +139,7 @@ void UButtonBase::UpdateButtonStyle()
 	}
 }
 
-void UButtonBase::UpdateContentSlotAlignment()
+void UButtonBase::UpdateContentSlot()
 {
 	if (IsValid(NS_Content))
 	{
@@ -148,6 +148,8 @@ void UButtonBase::UpdateContentSlotAlignment()
 		{
 			slot->SetHorizontalAlignment(_ContentHorizontalAlignment);
 			slot->SetVerticalAlignment(_ContentVerticalAlignment);
+
+			slot->SetPadding(_ContentPadding);
 		}
 	}
 }
