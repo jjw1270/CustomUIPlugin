@@ -4,7 +4,7 @@
 #include "Components/RadioButtonGroup.h"
 #include "Components/StackBox.h"
 #include "Components/StackBoxSlot.h"
-
+#include "Components/CanvasPanelSlot.h"
 
 void URadioButtonGroup::SynchronizeProperties()
 {
@@ -14,6 +14,12 @@ void URadioButtonGroup::SynchronizeProperties()
 		return;
 
 	StackBox->SetOrientation(_Orientation);
+	
+	auto cp_slot = Cast<UCanvasPanelSlot>(StackBox->Slot);
+	if (IsValid(cp_slot))
+	{
+		cp_slot->SetAutoSize(true);
+	}
 
 	UpdateRadioButtons();
 }
