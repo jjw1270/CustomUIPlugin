@@ -2,30 +2,39 @@
 
 
 #include "Components/RadioButtonGroup.h"
-#include "Components/GridPanel.h"
-#include "Components/GridSlot.h"
+#include "Components/StackBox.h"
+#include "Components/StackBoxSlot.h"
 
 
 void URadioButtonGroup::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
 
+	if (IsInvalid(StackBox))
+		return;
+
+	StackBox->SetOrientation(_Orientation);
+
 	UpdateRadioButtons();
 }
 
 void URadioButtonGroup::UpdateRadioButtons()
 {
-	if (IsInvalid(GP_ButtonGroup))
+	if (IsInvalid(StackBox))
 		return;
 
-	auto all_child = GP_ButtonGroup->GetAllChildren();
+	 FSlateChildSize slate_child_size;
 
-	GP_ButtonGroup->ClearChildren();
+	if (_Orientation == EOrientation::Orient_Horizontal)
+	{
+		slate_child_size.SizeRule = (_HorizontalAlignment == EHorizontalAlignment::HAlign_Fill) ? ESlateSizeRule::Fill : ESlateSizeRule::Automatic;
+	}
+	else
+	{
+		slate_child_size.SizeRule = (_VerticalAlignment == EVerticalAlignment::VAlign_Fill) ? ESlateSizeRule::Fill : ESlateSizeRule::Automatic;
+	}
 
-	int32 row = 0;
-	int32 col = 0;
-
-	for (auto child : all_child)
+	for (auto child : StackBox->GetAllChildren())
 	{
 		auto radio_button = Cast<URadioButton>(child);
 		if (IsValid(radio_button))
@@ -38,24 +47,20 @@ void URadioButtonGroup::UpdateRadioButtons()
 			radio_button->_OnClicked.RemoveAll(this);
 			radio_button->_OnClicked.AddDynamic(this, &URadioButtonGroup::OnClickRadioButton);
 
-			auto slot = GP_ButtonGroup->AddChildToGrid(radio_button, row, col);
+			auto slot = Cast<UStackBoxSlot>(child->Slot);
 			if (IsValid(slot))
 			{
 				slot->SetPadding(_ButtonPadding);
 
+				slot->SetSize(slate_child_size);
+
 				slot->SetHorizontalAlignment(_HorizontalAlignment);
 				slot->SetVerticalAlignment(_VerticalAlignment);
-
-				if (_Orientation == EOrientation::Orient_Horizontal)
-					col++;
-				else
-					row++;
 			}
 		}
 		else
 		{
 			TRACE_ERROR(TEXT("GP_ButtonGroup에는 Radio Button 만 가능합니다!!"));
-			GP_ButtonGroup->ClearChildren();
 			return;
 		}
 	}
@@ -71,7 +76,7 @@ void URadioButtonGroup::OnClickRadioButton(UButtonBase* _btn)
 
 void URadioButtonGroup::SelectRadioButtonByWidgetID(FName _widget_id)
 {
-	for (auto child : GP_ButtonGroup->GetAllChildren())
+	for (auto child : StackBox->GetAllChildren())
 	{
 		auto radio_btn = Cast<URadioButton>(child);
 		if (IsValid(radio_btn))
@@ -93,14 +98,14 @@ void URadioButtonGroup::SelectRadioButtonByWidgetID(FName _widget_id)
 
 void URadioButtonGroup::SelectRadioButtonByIndex(int32 _index)
 {
-	if (_index < 0 || _index >= GP_ButtonGroup->GetChildrenCount())
+	if (_index < 0 || _index >= StackBox->GetChildrenCount())
 	{
 		TRACE_WARNING(TEXT("out of index : %d"), _index);
-		_index = FMath::Clamp(_index, 0, GP_ButtonGroup->GetChildrenCount() - 1);
+		_index = FMath::Clamp(_index, 0, StackBox->GetChildrenCount() - 1);
 	}
 
 	int32 idx = 0;
-	for (auto child : GP_ButtonGroup->GetAllChildren())
+	for (auto child : StackBox->GetAllChildren())
 	{
 		auto radio_btn = Cast<URadioButton>(child);
 		if (IsValid(radio_btn))

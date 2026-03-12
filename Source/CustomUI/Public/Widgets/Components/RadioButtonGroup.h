@@ -15,7 +15,7 @@ class CUSTOMUI_API URadioButtonGroup : public UWidgetBase
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	TObjectPtr<class UGridPanel> GP_ButtonGroup = nullptr;
+	TObjectPtr<class UStackBox> StackBox = nullptr;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "RadioButtonGroup")
