@@ -56,10 +56,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName _WidgetID = FName();
 
+public:
+	void SetWidgetID(FName _widget_id)
+	{
+		_WidgetID = _widget_id;
+	}
+
+	UFUNCTION(BlueprintPure)
+	FName GetWidgetID() const { return _WidgetID; }
+
+protected:
 	UPROPERTY(EditAnywhere)
 	bool _IsShowOnNextTick = true;
 
-protected:
 	UPROPERTY(Transient, meta = (BindWidgetAnimOptional))
 	TObjectPtr<UWidgetAnimation> ShowAnim = nullptr;
 
@@ -126,6 +135,10 @@ private:
 	void SetWidgetState(EWidgetState _new_state);
 	void HideWidget();
 
+public:
+	UFUNCTION(BlueprintPure)
+	EWidgetState GetWidgetState() const { return _WidgetState; }
+
 #pragma region Event
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDM_OnShowWidget, UWidgetBase*, _widget);
@@ -154,13 +167,5 @@ public:
 	virtual void OnClose_Implementation() {};
 
 #pragma endregion Event
-
-// Getters
-public:
-	UFUNCTION(BlueprintPure)
-	FName GetWidgetID() const { return _WidgetID; }
-
-	UFUNCTION(BlueprintPure)
-	EWidgetState GetWidgetState() const { return _WidgetState; }
 
 };
